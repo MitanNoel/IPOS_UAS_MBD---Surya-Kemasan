@@ -1,6 +1,9 @@
 <?php
 require_once '../config/database.php';
 
+// Definisi Base URL untuk environment live/embed
+$baseUrl = "https://live-web-mbd-kelompok.infinityfree.me/proyekmbd-sample/public/";
+
 try {
     // Menggunakan JOIN untuk mengambil nama_kategori dari tabel kategori
     $sql = "SELECT b.*, k.nama_kategori 
@@ -44,7 +47,8 @@ try {
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
                 <p class="text-gray-500 mt-1">Pantau stok dan kategori produk Anda secara real-time.</p>
             </div>
-            <a href="tambah.php"
+            <!-- Link Tambah diarahkan ke live URL -->
+            <a href="<?= $baseUrl ?>tambah.php"
                 class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 Tambah Barang Baru
@@ -123,13 +127,14 @@ try {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
-                                    <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
+                                    <!-- Link Edit diarahkan ke live URL -->
+                                    <a href="<?= $baseUrl ?>edit.php?id=<?= urlencode($row['id_barang']) ?>"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         title="Edit">
                                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                                     </a>
-                                    <!-- Sekarang langsung mengarah ke hapus.php tanpa JS confirm -->
-                                    <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
+                                    <!-- Link Hapus diarahkan ke live URL -->
+                                    <a href="<?= $baseUrl ?>hapus.php?id=<?= urlencode($row['id_barang']) ?>"
                                         class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                         title="Hapus">
                                         <i data-lucide="trash-2" class="w-5 h-5"></i>
