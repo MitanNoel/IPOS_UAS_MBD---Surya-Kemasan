@@ -176,7 +176,7 @@ try {
                                 <select id="id_kategori" name="id_kategori" required
                                     class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900 appearance-none bg-white">
                                     <option value="" disabled selected>-- Pilih Kategori --</option>
-                                    <?php foreach ($list_kategori as $kat): ?>
+                                    <?php foreach ($k as $kat): ?>
                                     <option value="<?= $kat['id_kategori'] ?>">
                                         <?= htmlspecialchars($kat['nama_kategori']) ?>
                                     </option>
