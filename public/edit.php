@@ -6,26 +6,23 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$id = $_GET['id'];
+$i = $_GET['id'];
 
 try {
-    // Ambil data barang yang akan diedit
-    $sql = "SELECT * FROM barang WHERE id_barang = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $q = 'SELECT * FROM barang WHERE id_barang = :id';
+    $s = $pdo->prepare($q);
+    $s->bindParam(':id', $i);
+    $s->execute();
+    $d = $s->fetch(PDO::FETCH_ASSOC);
 
-    if (!$data) {
-        die("Data barang tidak ditemukan");
+    if (!$d) {
+        die('Data barang tidak ditemukan');
     }
 
-    // Ambil semua kategori untuk dropdown
-    $sql_kat = "SELECT * FROM kategori ORDER BY nama_kategori ASC";
-    $list_kategori = $pdo->query($sql_kat)->fetchAll(PDO::FETCH_ASSOC);
+    $k = $pdo->query('SELECT * FROM kategori ORDER BY nama_kategori ASC')->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
-    die("Error database: " . $e->getMessage());
+    die('Error database: ' . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -39,26 +36,9 @@ try {
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translate(-50%, -60%);
-            opacity: 0;
-        }
-
-        to {
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-    }
-
-    .popup-animation {
-        animation: slideIn 0.3s ease-out forwards;
-    }
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes slideIn { from { transform: translate(-50%, -60%); opacity: 0; } to { transform: translate(-50%, -50%); opacity: 1; } }
+    .popup-animation { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
 
@@ -85,7 +65,7 @@ try {
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Perbarui Produk</h1>
-                <p class="text-gray-500 mt-1">Ubah detail barang untuk SKU #<?= htmlspecialchars($id) ?>.</p>
+                <p class="text-gray-500 mt-1">Ubah detail barang untuk SKU #<?= htmlspecialchars($i) ?>.</p>
             </div>
             <a href="index.php"
                 class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 shadow-sm gap-2">
@@ -107,7 +87,7 @@ try {
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <form id="editForm" action="../process/update.php" method="POST" class="p-8 space-y-6">
-                        <input type="hidden" name="id_barang" value="<?= htmlspecialchars($data['id_barang']) ?>">
+                        <input type="hidden" name="id_barang" value="<?= htmlspecialchars($d['id_barang']) ?>">
 
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-gray-700">Nama Barang</label>
@@ -117,7 +97,7 @@ try {
                                         class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
                                 </div>
                                 <input type="text" name="nama_barang"
-                                    value="<?= htmlspecialchars($data['nama_barang']) ?>" required
+                                    value="<?= htmlspecialchars($d['nama_barang']) ?>" required
                                     class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none">
                             </div>
                         </div>
@@ -127,13 +107,13 @@ try {
                                 <label class="text-sm font-semibold text-gray-700 font-bold text-blue-600">Harga Jual
                                     (Rp)</label>
                                 <input type="number" id="harga_jual" name="harga_jual"
-                                    value="<?= htmlspecialchars($data['harga_jual']) ?>" required
+                                    value="<?= htmlspecialchars($d['harga_jual']) ?>" required
                                     class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none font-bold">
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-semibold text-gray-700">Harga Beli (Rp)</label>
                                 <input type="number" id="harga_beli" name="harga_beli"
-                                    value="<?= htmlspecialchars($data['harga_beli']) ?>" required
+                                    value="<?= htmlspecialchars($d['harga_beli']) ?>" required
                                     class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none">
                             </div>
                         </div>
@@ -147,10 +127,10 @@ try {
                                 </div>
                                 <select name="id_kategori" required
                                     class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 outline-none appearance-none bg-white">
-                                    <?php foreach ($list_kategori as $kat): ?>
-                                    <option value="<?= $kat['id_kategori'] ?>"
-                                        <?= ($kat['id_kategori'] == $data['id_kategori']) ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($kat['nama_kategori']) ?>
+                                    <?php foreach ($k as $r): ?>
+                                    <option value="<?= $r['id_kategori'] ?>"
+                                        <?= ($r['id_kategori'] == $d['id_kategori']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($r['nama_kategori']) ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -176,15 +156,8 @@ try {
     </div>
 
     <script>
-    const form = document.getElementById('editForm');
-    form.addEventListener('submit', function(e) {
-        const jual = parseFloat(document.getElementById('harga_jual').value);
-        const beli = parseFloat(document.getElementById('harga_beli').value);
-        if (jual <= 0 || beli <= 0) {
-            e.preventDefault();
-            document.getElementById('errorPopup').classList.remove('hidden');
-        }
-    });
+    const f=document.getElementById('editForm');
+    f.addEventListener('submit',e=>{const j=parseFloat(document.getElementById('harga_jual').value),b=parseFloat(document.getElementById('harga_beli').value);if(j<=0||b<=0){e.preventDefault();document.getElementById('errorPopup').classList.remove('hidden');}});
     lucide.createIcons();
     </script>
 </body>

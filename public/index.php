@@ -2,19 +2,13 @@
 require_once '../config/database.php';
 
 try {
-    // Menggunakan JOIN untuk mengambil nama_kategori dari tabel kategori
-    $sql = "SELECT b.*, k.nama_kategori 
-            FROM barang b 
-            LEFT JOIN kategori k ON b.id_kategori = k.id_kategori 
-            ORDER BY b.id_barang DESC";
-    $stmt = $pdo->query($sql);
-    $barang = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Hitung ringkasan data
-    $totalBarang = count($barang);
-    $totalNilai = array_sum(array_column($barang, 'harga_jual'));
+    $q = "SELECT b.*, k.nama_kategori FROM barang b LEFT JOIN kategori k ON b.id_kategori = k.id_kategori ORDER BY b.id_barang DESC";
+    $s = $pdo->query($q);
+    $d = $s->fetchAll(PDO::FETCH_ASSOC);
+    $c = count($d);
+    $t = array_sum(array_column($d, 'harga_jual'));
 } catch (PDOException $e) {
-    die("Error database: " . $e->getMessage());
+    die('Error database: ' . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -59,7 +53,7 @@ try {
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Total Item</p>
-                    <p class="text-2xl font-bold"><?= $totalBarang ?> <span
+                    <p class="text-2xl font-bold"><?= $c ?> <span
                             class="text-sm font-normal text-gray-400">Unit</span></p>
                 </div>
             </div>
@@ -69,7 +63,7 @@ try {
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium">Estimasi Nilai Jual</p>
-                    <p class="text-2xl font-bold text-emerald-600">Rp <?= number_format($totalNilai, 0, ',', '.') ?></p>
+                    <p class="text-2xl font-bold text-emerald-600">Rp <?= number_format($t, 0, ',', '.') ?></p>
                 </div>
             </div>
         </div>
@@ -93,7 +87,7 @@ try {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <?php if (empty($barang)): ?>
+                        <?php if (empty($d)): ?>
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center text-gray-400">
                                 <i data-lucide="archive-x" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
@@ -101,34 +95,34 @@ try {
                             </td>
                         </tr>
                         <?php else: ?>
-                        <?php foreach ($barang as $row): ?>
+                        <?php foreach ($d as $r): ?>
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">
-                                #<?= htmlspecialchars($row['id_barang']) ?>
+                                #<?= htmlspecialchars($r['id_barang']) ?>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm font-semibold text-gray-900">
-                                    <?= htmlspecialchars($row['nama_barang']) ?></div>
+                                    <?= htmlspecialchars($r['nama_barang']) ?></div>
                                 <div class="text-[10px] text-gray-400 uppercase tracking-tighter">Verified</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-sm font-bold text-gray-900">Rp
-                                    <?= number_format($row['harga_jual'], 0, ',', '.') ?></span>
+                                    <?= number_format($r['harga_jual'], 0, ',', '.') ?></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
                                     class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
-                                    <?= htmlspecialchars($row['nama_kategori'] ?? 'Umum') ?>
+                                    <?= htmlspecialchars($r['nama_kategori'] ?? 'Umum') ?>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
-                                    <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
+                                    <a href="edit.php?id=<?= urlencode($r['id_barang']) ?>"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         title="Edit">
                                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                                     </a>
-                                    <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
+                                    <a href="hapus.php?id=<?= urlencode($r['id_barang']) ?>"
                                         onclick="return confirm('Hapus barang ini?')"
                                         class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                         title="Hapus">
@@ -143,7 +137,7 @@ try {
                 </table>
             </div>
             <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-xs text-gray-400">Total: <?= count($barang) ?> entri.</p>
+                <p class="text-xs text-gray-400">Total: <?= $c ?> entri.</p>
             </div>
         </div>
     </div>

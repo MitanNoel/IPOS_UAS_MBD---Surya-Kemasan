@@ -6,20 +6,20 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$id = $_GET['id'];
+$i = $_GET['id'];
 
 try {
-    $sql = "SELECT * FROM barang WHERE id_barang = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $q = 'SELECT * FROM barang WHERE id_barang = :id';
+    $s = $pdo->prepare($q);
+    $s->bindParam(':id', $i);
+    $s->execute();
+    $d = $s->fetch(PDO::FETCH_ASSOC);
 
-    if (!$data) {
-        die("Data barang tidak ditemukan");
+    if (!$d) {
+        die('Data barang tidak ditemukan');
     }
 } catch (PDOException $e) {
-    die("Error database: " . $e->getMessage());
+    die('Error database: ' . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -39,11 +39,11 @@ try {
     <h2>Konfirmasi Hapus Data</h2>
     
     <div class="alert">
-        <p>Apakah Anda yakin ingin menghapus barang <strong><?= htmlspecialchars($data['nama_barang']) ?></strong>?</p>
+        <p>Apakah Anda yakin ingin menghapus barang <strong><?= htmlspecialchars($d['nama_barang']) ?></strong>?</p>
         <p>Tindakan ini tidak dapat dibatalkan.</p>
     </div>
     
-    <a href="../process/delete.php?id=<?= urlencode($data['id_barang']) ?>" class="btn btn-delete">Ya, Hapus Data</a>
+    <a href="../process/delete.php?id=<?= urlencode($d['id_barang']) ?>" class="btn btn-delete">Ya, Hapus Data</a>
     <a href="index.php" class="btn btn-cancel">Batal</a>
 </body>
 </html>

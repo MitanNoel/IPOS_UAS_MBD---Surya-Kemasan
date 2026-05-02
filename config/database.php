@@ -1,33 +1,30 @@
 <?php
-
-function loadEnv($path) {
-    if (!file_exists($path)) {
+function o_env($f)
+{
+    if (!is_file($f)) {
         return;
     }
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
-        list($name, $value) = explode('=', $line, 2);
-        $_ENV[trim($name)] = trim($value);
+    foreach (file($f, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $l) {
+        $l = trim($l);
+        if ($l === '' || $l[0] === '#' || strpos($l, '=') === false) {
+            continue;
+        }
+        [$n, $v] = explode('=', $l, 2);
+        $_ENV[trim($n)] = trim($v);
     }
 }
 
-loadEnv(__DIR__ . '/../.env');
+o_env(__DIR__ . '/../.env');
 
-// Ambil data dari $_ENV
-$host     = $_ENV['DB_HOST'] ?? 'localhost';
-$port     = $_ENV['DB_PORT'] ?? '3306';
-$dbname   = $_ENV['DB_DATABASE'] ?? '';
-$username = $_ENV['DB_USERNAME'] ?? '';
-$password = $_ENV['DB_PASSWORD'] ?? '';
+$h = $_ENV['DB_HOST'] ?? 'localhost';
+$p = $_ENV['DB_PORT'] ?? '3306';
+$d = $_ENV['DB_DATABASE'] ?? '';
+$u = $_ENV['DB_USERNAME'] ?? '';
+$w = $_ENV['DB_PASSWORD'] ?? '';
 
 try {
-    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
-    $pdo = new PDO($dsn, $username, $password);
-
+    $pdo = new PDO("mysql:host={$h};port={$p};dbname={$d};charset=utf8", $u, $w);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // echo "Koneksi Berhasil!"; 
 } catch (PDOException $e) {
-    die("Koneksi database gagal: " . $e->getMessage());
+    die('Koneksi database gagal: ' . $e->getMessage());
 }
-?>

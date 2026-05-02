@@ -1,13 +1,12 @@
 <?php
 require_once '../config/database.php';
 
-// Ambil data kategori untuk dropdown
 try {
-    $sql_kat = "SELECT * FROM kategori ORDER BY nama_kategori ASC";
-    $stmt_kat = $pdo->query($sql_kat);
-    $list_kategori = $stmt_kat->fetchAll(PDO::FETCH_ASSOC);
+    $q = 'SELECT * FROM kategori ORDER BY nama_kategori ASC';
+    $s = $pdo->query($q);
+    $k = $s->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Gagal mengambil data kategori: " . $e->getMessage());
+    die('Gagal mengambil data kategori: ' . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -23,26 +22,9 @@ try {
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translate(-50%, -60%);
-            opacity: 0;
-        }
-
-        to {
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-    }
-
-    .popup-animation {
-        animation: slideIn 0.3s ease-out forwards;
-    }
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes slideIn { from { transform: translate(-50%, -60%); opacity: 0; } to { transform: translate(-50%, -50%); opacity: 1; } }
+    .popup-animation { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
 
@@ -102,9 +84,9 @@ try {
                         Kategori</h3>
                     <p class="text-xs text-gray-400 mb-3 italic">Nama kategori saat ini:</p>
                     <div class="flex flex-wrap gap-2">
-                        <?php foreach($list_kategori as $kat): ?>
+                        <?php foreach ($k as $r): ?>
                         <span class="px-2 py-1 bg-gray-100 rounded text-[10px] text-gray-600 border border-gray-200">
-                            <?= htmlspecialchars($kat['nama_kategori']) ?>
+                            <?= htmlspecialchars($r['nama_kategori']) ?>
                         </span>
                         <?php endforeach; ?>
                     </div>
@@ -226,27 +208,9 @@ try {
     </div>
 
     <script>
-    const form = document.getElementById('insertForm');
-    const popup = document.getElementById('errorPopup');
-
-    form.addEventListener('submit', function(e) {
-        const hargaJual = parseFloat(document.getElementById('harga_jual').value);
-        const hargaBeli = parseFloat(document.getElementById('harga_beli').value);
-
-        if (hargaJual <= 0 || hargaBeli <= 0) {
-            e.preventDefault();
-            showPopup();
-        }
-    });
-
-    function showPopup() {
-        popup.classList.remove('hidden');
-    }
-
-    function closePopup() {
-        popup.classList.add('hidden');
-    }
-
+    const f=document.getElementById('insertForm'),p=document.getElementById('errorPopup');
+    f.addEventListener('submit',e=>{const j=parseFloat(document.getElementById('harga_jual').value),b=parseFloat(document.getElementById('harga_beli').value);if(j<=0||b<=0){e.preventDefault();p.classList.remove('hidden');}});
+    function closePopup(){p.classList.add('hidden');}
     lucide.createIcons();
     </script>
 </body>

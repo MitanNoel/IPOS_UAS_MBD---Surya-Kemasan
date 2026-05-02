@@ -14,6 +14,11 @@ Sesuai dengan spesifikasi tugas:
 3. **Update**: Mengubah data `barang` menggunakan Form.
 4. **Delete**: Menghapus data `barang` via ID URL.
 
+## Database Sample
+- File sample siap import ada di [database/sample.sql](database/sample.sql).
+- Import file itu lewat phpMyAdmin setelah memilih database tujuan.
+- File tersebut sudah berisi schema tabel `kategori` dan `barang` plus minimal 30 data produk dummy.
+
 ## Keamanan & Standar
 - Semua query menggunakan Prepared Statements dengan named parameter (`:param`)
 - Penanganan error menggunakan blok `try-catch` (`PDO::ERRMODE_EXCEPTION`)
