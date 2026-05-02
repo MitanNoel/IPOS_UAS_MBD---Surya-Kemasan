@@ -1,6 +1,7 @@
 <?php
 require_once '../config/database.php';
 
+// Kembali menggunakan redirect relatif
 if (!isset($_GET['id'])) {
     header("Location: index.php");
     exit();
@@ -9,7 +10,7 @@ if (!isset($_GET['id'])) {
 $id = $_GET['id'];
 
 try {
-    // Mengambil detail barang lengkap dengan nama kategori untuk memberikan konteks yang jelas sebelum dihapus
+    // Mengambil detail barang lengkap dengan nama kategori
     $sql = "SELECT b.*, k.nama_kategori 
             FROM barang b 
             LEFT JOIN kategori k ON b.id_kategori = k.id_kategori 
@@ -19,7 +20,8 @@ try {
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$data) {
-        die("Barang tidak ditemukan.");
+        header("Location: index.php");
+        exit();
     }
 } catch (PDOException $e) {
     die("Error database: " . $e->getMessage());
@@ -48,7 +50,7 @@ try {
 <body class="bg-gray-50 text-gray-800 min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full">
-        <!-- Kartu Konfirmasi -->
+        <!-- Kartu Konfirmasi Modern -->
         <div class="bg-white rounded-2xl shadow-2xl border border-red-100 overflow-hidden transform transition-all">
             <!-- Bagian Header Peringatan -->
             <div class="bg-red-50 px-8 py-10 text-center">
@@ -61,23 +63,23 @@ try {
                     permanen dan tidak bisa dibatalkan</p>
             </div>
 
-            <!-- Detail Barang yang akan dihapus -->
+            <!-- Detail Barang -->
             <div class="px-8 py-6 border-y border-gray-50">
                 <div class="bg-gray-50 p-5 rounded-xl space-y-4">
                     <div class="flex justify-between items-start text-sm">
-                        <span class="text-gray-400 font-medium">Nama Barang</span>
+                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Nama Barang</span>
                         <span
                             class="font-bold text-gray-900 text-right"><?= htmlspecialchars($data['nama_barang']) ?></span>
                     </div>
                     <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400 font-medium">SKU / ID</span>
+                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">SKU / ID</span>
                         <span
                             class="font-mono bg-white px-2 py-1 rounded border border-gray-200 text-[10px] font-bold text-gray-600">
                             #<?= htmlspecialchars($data['id_barang']) ?>
                         </span>
                     </div>
                     <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400 font-medium">Kategori</span>
+                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Kategori</span>
                         <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[11px] font-bold uppercase">
                             <?= htmlspecialchars($data['nama_kategori'] ?? 'Tanpa Kategori') ?>
                         </span>
@@ -87,16 +89,17 @@ try {
 
             <!-- Tombol Aksi -->
             <div class="p-8 space-y-3">
-                <!-- Menggunakan form POST untuk keamanan penghapusan data -->
+                <!-- Action kembali ke path relatif -->
                 <form action="../process/delete.php" method="POST">
                     <input type="hidden" name="id_barang" value="<?= htmlspecialchars($data['id_barang']) ?>">
                     <button type="submit"
                         class="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 group">
                         <i data-lucide="check-circle-2" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                        Ya, Hapus Data
+                        Ya, Hapus Sekarang
                     </button>
                 </form>
 
+                <!-- Link kembali ke index relatif -->
                 <a href="index.php"
                     class="w-full py-4 bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold rounded-xl transition-all flex items-center justify-center border border-gray-200">
                     Batalkan
@@ -105,11 +108,10 @@ try {
         </div>
 
         <p class="text-center text-gray-400 text-[10px] mt-6 font-medium uppercase tracking-widest">
-            Sistem Inventaris • Keamanan Data Berlapis
+            Sistem Inventaris • Manajemen Data Kelompok
         </p>
     </div>
 
-    <!-- Inisialisasi Ikon Lucide -->
     <script>
     lucide.createIcons();
     </script>
