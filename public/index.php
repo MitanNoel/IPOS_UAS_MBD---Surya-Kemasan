@@ -128,8 +128,8 @@ try {
                                         title="Edit">
                                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                                     </a>
+                                    <!-- Sekarang langsung mengarah ke hapus.php tanpa JS confirm -->
                                     <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
-                                        onclick="return confirm('Hapus barang ini?')"
                                         class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                         title="Hapus">
                                         <i data-lucide="trash-2" class="w-5 h-5"></i>
