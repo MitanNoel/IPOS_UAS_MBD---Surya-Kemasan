@@ -1,5 +1,7 @@
 <?php
-require_once '../config/database.php';
+require_once '../config/app.php';
+
+require_role('admin', '../public/login.php', '../public/index.php?status=forbidden');
 
 // Pastikan data dikirim via POST untuk keamanan
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_barang'])) {

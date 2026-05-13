@@ -1,5 +1,8 @@
 <?php
-require_once '../config/database.php';
+require_once '../config/app.php';
+
+$user = require_auth('login.php');
+$role = current_user_role();
 
 try {
     // Menggunakan JOIN untuk mengambil nama_kategori dari tabel kategori
@@ -23,7 +26,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory System | Dashboard</title>
+    <title>Toko Surya Kemasan | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -38,19 +41,47 @@ try {
 <body class="bg-gray-50 text-gray-800 min-h-screen">
 
     <div class="max-w-6xl mx-auto px-4 py-8">
-        <!-- Header Section -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200"><?= role_label($role) ?></span>
+                </div>
                 <p class="text-gray-500 mt-1">Pantau stok dan kategori produk Anda secara real-time.</p>
+                <p class="text-sm text-gray-400 mt-1">Masuk sebagai <?= htmlspecialchars($user['full_name'] ?? $user['username'] ?? 'Pengguna') ?>.</p>
             </div>
-            <!-- Perbaikan: Link relatif tanpa $baseUrl -->
-            <a href="tambah.php"
-                class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Tambah Barang Baru
-            </a>
+            <div class="flex items-center gap-3 flex-wrap">
+                <?php if ($role === 'admin'): ?>
+                <a href="tambah.php"
+                    class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    Tambah Barang Baru
+                </a>
+                <?php endif; ?>
+                <a href="logout.php"
+                    class="inline-flex items-center justify-center px-5 py-2.5 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    Keluar
+                </a>
+            </div>
         </div>
+
+        <?php if (isset($_GET['status'])): ?>
+        <div class="mb-6 rounded-xl border px-4 py-3 text-sm <?php echo in_array($_GET['status'], ['success_insert', 'success_update', 'deleted'], true) ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-700'; ?>">
+            <?php if ($_GET['status'] === 'success_insert'): ?>Data barang berhasil ditambahkan.
+            <?php elseif ($_GET['status'] === 'success_update'): ?>Data barang berhasil diperbarui.
+            <?php elseif ($_GET['status'] === 'deleted'): ?>Data barang berhasil dihapus.
+            <?php elseif ($_GET['status'] === 'forbidden'): ?>Anda tidak memiliki akses untuk membuka halaman tersebut.
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($role === 'cashier'): ?>
+        <div class="mb-8 rounded-2xl border border-sky-200 bg-sky-50 p-5 text-sky-800">
+            <h2 class="font-bold text-lg">Mode Kasir</h2>
+            <p class="mt-1 text-sm leading-6">Dashboard ini masih membaca data inventaris yang sama, tetapi aksi pengelolaan dibatasi. Modul POS penjualan akan menjadi langkah berikutnya.</p>
+        </div>
+        <?php endif; ?>
 
         <!-- Statistik Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -88,15 +119,17 @@ try {
                                 Jual</th>
                             <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Kategori
                             </th>
-                            <th
-                                class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
+                            <?php if ($role === 'admin'): ?>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
                                 Aksi</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
+                        <?php $tableColspan = $role === 'admin' ? 5 : 4; ?>
                         <?php if (empty($barang)): ?>
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                            <td colspan="<?= $tableColspan ?>" class="px-6 py-12 text-center text-gray-400">
                                 <i data-lucide="archive-x" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
                                 Belum ada data barang.
                             </td>
@@ -122,9 +155,9 @@ try {
                                     <?= htmlspecialchars($row['nama_kategori'] ?? 'Tanpa Kategori') ?>
                                 </span>
                             </td>
+                            <?php if ($role === 'admin'): ?>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
-                                    <!-- Perbaikan: Link relatif tanpa $baseUrl -->
                                     <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                         title="Ubah Data">
@@ -137,6 +170,7 @@ try {
                                     </a>
                                 </div>
                             </td>
+                            <?php endif; ?>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>

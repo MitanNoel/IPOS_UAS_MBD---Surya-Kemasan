@@ -1,5 +1,7 @@
 <?php
-require_once '../config/database.php';
+require_once '../config/app.php';
+
+require_role('admin', 'login.php', 'index.php?status=forbidden');
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");
@@ -87,10 +89,16 @@ try {
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Perbarui Produk</h1>
                 <p class="text-gray-500 mt-1">Ubah detail barang untuk SKU #<?= htmlspecialchars($id) ?>.</p>
             </div>
-            <a href="index.php"
-                class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 shadow-sm gap-2">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
-            </a>
+            <div class="flex items-center gap-3 flex-wrap">
+                <a href="index.php"
+                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 shadow-sm gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
+                </a>
+                <a href="logout.php"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-black shadow-sm gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
+                </a>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
