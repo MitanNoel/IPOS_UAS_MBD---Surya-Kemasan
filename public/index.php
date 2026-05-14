@@ -1,14 +1,22 @@
 <?php
-require_once '../config/app.php';
-
-$user = require_auth('login.php');
-$role = current_user_role();
+require_once '../auth/check_auth.php';
+require_once '../config/database.php';
 
 try {
-    // Menggunakan JOIN untuk mengambil nama_kategori dari tabel kategori
-    $sql = "SELECT b.*, k.nama_kategori 
-            FROM barang b 
-            LEFT JOIN kategori k ON b.id_kategori = k.id_kategori 
+    // Query dengan perhitungan stok dinamis dari pembelian & penjualan
+    $sql = "SELECT 
+                b.*,
+                k.nama_kategori,
+                COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) as qty_in,
+                COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as qty_out,
+                COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) - 
+                COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as stok,
+                COALESCE((b.harga_jual - b.harga_beli), 0) as margin
+            FROM barang b
+            LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
+            LEFT JOIN detail_pembelian dpb ON b.id_barang = dpb.id_barang
+            LEFT JOIN detail_penjualan dp ON b.id_barang = dp.id_barang
+            GROUP BY b.id_barang
             ORDER BY b.id_barang DESC";
     $stmt = $pdo->query($sql);
     $barang = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -16,6 +24,7 @@ try {
     // Hitung ringkasan data
     $totalBarang = count($barang);
     $totalNilai = array_sum(array_column($barang, 'harga_jual'));
+    $totalStok = array_sum(array_column($barang, 'stok'));
 } catch (PDOException $e) {
     die("Error database: " . $e->getMessage());
 }
@@ -26,283 +35,139 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toko Surya Kemasan | Dashboard</title>
+    <title>Inventory System | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-    :root {
-        --ipos-blue: #337ab7;
-        --ipos-blue-dark: #214f7d;
-        --ipos-surface: #f5f7fb;
-        --ipos-border: #d9e3f0;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     body {
         font-family: 'Inter', sans-serif;
-        background:
-            radial-gradient(circle at top left, rgba(51, 122, 183, 0.08), transparent 30%),
-            linear-gradient(180deg, #f8fbff 0%, #f5f7fb 100%);
     }
 
-    .ipos-sidebar {
-        background: linear-gradient(180deg, #1f3f61 0%, #19334f 100%);
-        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
-    }
-
-    .ipos-card {
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(217, 227, 240, 0.9);
-        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
-    }
-
-    .ipos-table thead th {
-        background: linear-gradient(180deg, #337ab7 0%, #2c6ca5 100%);
-        color: #fff;
-    }
-
-    .ipos-table tbody tr:hover {
-        background: rgba(51, 122, 183, 0.04);
-    }
-
-    .menu-link {
-        transition: all 0.2s ease;
-    }
-
-    .menu-link:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateX(2px);
+    .main-content {
+        margin-left: 16rem;
     }
     </style>
 </head>
 
-<body class="min-h-screen text-slate-800">
-    <div class="min-h-screen lg:flex">
-        <aside class="ipos-sidebar lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 text-white">
-            <div class="p-6 border-b border-white/10">
-                <div class="inline-flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-blue-700 shadow-sm">
-                        <i data-lucide="store" class="h-6 w-6"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-white/60">Toko Surya Kemasan</p>
-                        <h1 class="text-lg font-bold">iPos-inspired Panel</h1>
-                    </div>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+    
+    <!-- Navbar -->
+    <?php require_once '../includes/navbar.php'; ?>
+
+    <div class="main-content px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
+                <p class="text-gray-500 mt-1">Pantau stok dan kategori produk Anda secara real-time.</p>
+            </div>
+            <!-- Perbaikan: Link relatif tanpa $baseUrl -->
+            <a href="tambah.php"
+                class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                Tambah Barang Baru
+            </a>
+        </div>
+
+        <!-- Statistik Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                    <i data-lucide="package" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Total Item</p>
+                    <p class="text-2xl font-bold"><?= $totalBarang ?> <span
+                            class="text-sm font-normal text-gray-400">Unit</span></p>
                 </div>
             </div>
-
-            <nav class="p-4 space-y-2 text-sm">
-                <a href="index.php" class="menu-link flex items-center gap-3 rounded-xl bg-white/12 px-4 py-3 font-semibold">
-                    <i data-lucide="layout-grid" class="h-4 w-4"></i>
-                    Dashboard
-                </a>
-                <a href="#barang" class="menu-link flex items-center gap-3 rounded-xl px-4 py-3 text-white/85 hover:text-white">
-                    <i data-lucide="package" class="h-4 w-4"></i>
-                    Data Barang
-                </a>
-                <a href="#penjualan" class="menu-link flex items-center gap-3 rounded-xl px-4 py-3 text-white/85 hover:text-white">
-                    <i data-lucide="shopping-cart" class="h-4 w-4"></i>
-                    Penjualan
-                    <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/60">soon</span>
-                </a>
-                <a href="#pembelian" class="menu-link flex items-center gap-3 rounded-xl px-4 py-3 text-white/85 hover:text-white">
-                    <i data-lucide="truck" class="h-4 w-4"></i>
-                    Pembelian
-                    <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/60">soon</span>
-                </a>
-                <a href="#persediaan" class="menu-link flex items-center gap-3 rounded-xl px-4 py-3 text-white/85 hover:text-white">
-                    <i data-lucide="boxes" class="h-4 w-4"></i>
-                    Persediaan
-                    <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/60">soon</span>
-                </a>
-                <a href="#pengaturan" class="menu-link flex items-center gap-3 rounded-xl px-4 py-3 text-white/85 hover:text-white">
-                    <i data-lucide="settings-2" class="h-4 w-4"></i>
-                    Pengaturan
-                    <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/60">soon</span>
-                </a>
-            </nav>
-
-            <div class="mt-auto hidden lg:block p-4">
-                <div class="rounded-2xl border border-white/10 bg-white/8 p-4 text-sm text-white/80">
-                    <p class="text-xs uppercase tracking-[0.3em] text-white/45">Login Aktif</p>
-                    <p class="mt-2 font-semibold text-white"><?= htmlspecialchars($user['full_name'] ?? $user['username'] ?? 'Pengguna') ?></p>
-                    <p class="text-xs text-white/60"><?= role_label($role) ?></p>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i data-lucide="trending-up" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Estimasi Nilai Jual</p>
+                    <p class="text-2xl font-bold text-emerald-600">Rp <?= number_format($totalNilai, 0, ',', '.') ?></p>
                 </div>
             </div>
-        </aside>
+        </div>
 
-        <main class="flex-1 lg:ml-64">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-                <div class="ipos-card mb-6 rounded-3xl px-6 py-5 sm:px-8">
-                    <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                        <div>
-                            <div class="flex flex-wrap items-center gap-3">
-                                <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">Dashboard</span>
-                                <span class="inline-flex items-center rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-semibold text-blue-700"><?= role_label($role) ?></span>
-                            </div>
-                            <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Manajemen Inventaris</h2>
-                            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Pantau stok, kategori, dan nilai jual produk dalam satu panel yang mengikuti arah visual iPos 5, lalu berkembang ke modul transaksi berikutnya.</p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3">
-                            <?php if ($role === 'admin'): ?>
-                            <a href="tambah.php" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-blue-700">
-                                <i data-lucide="plus-circle" class="h-5 w-5"></i>
-                                Tambah Barang
-                            </a>
-                            <?php endif; ?>
-                            <a href="logout.php" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
-                                <i data-lucide="log-out" class="h-5 w-5"></i>
-                                Keluar
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <?php if (isset($_GET['status'])): ?>
-                <div class="mb-6 rounded-2xl border px-4 py-3 text-sm shadow-sm <?php echo in_array($_GET['status'], ['success_insert', 'success_update', 'deleted'], true) ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'; ?>">
-                    <?php if ($_GET['status'] === 'success_insert'): ?>Data barang berhasil ditambahkan.
-                    <?php elseif ($_GET['status'] === 'success_update'): ?>Data barang berhasil diperbarui.
-                    <?php elseif ($_GET['status'] === 'deleted'): ?>Data barang berhasil dihapus.
-                    <?php elseif ($_GET['status'] === 'forbidden'): ?>Anda tidak memiliki akses untuk membuka halaman tersebut.
-                    <?php endif; ?>
-                </div>
-                <?php endif; ?>
-
-                <?php if (in_array($role, ['kasir', 'cashier'], true)): ?>
-                <div class="mb-8 rounded-3xl border border-sky-200 bg-sky-50 p-6 text-sky-800 shadow-sm">
-                    <div class="flex items-start gap-3">
-                        <div class="rounded-2xl bg-white/70 p-3 text-sky-700 shadow-sm">
-                            <i data-lucide="badge-info" class="h-6 w-6"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold">Mode Kasir</h3>
-                            <p class="mt-1 text-sm leading-6">Akses saat ini fokus ke data inventaris. Tampilan ini disiapkan agar modul POS penjualan dapat masuk tanpa mengubah bahasa visualnya.</p>
-                        </div>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 mb-8">
-                    <div class="ipos-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-slate-500">Total Item</p>
-                                <p class="mt-2 text-3xl font-extrabold text-slate-900"><?= $totalBarang ?></p>
-                            </div>
-                            <div class="rounded-2xl bg-blue-50 p-3 text-blue-700">
-                                <i data-lucide="package" class="h-7 w-7"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ipos-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-slate-500">Kategori Aktif</p>
-                                <p class="mt-2 text-3xl font-extrabold text-slate-900"><?= count(array_unique(array_filter(array_column($barang, 'nama_kategori')))) ?></p>
-                            </div>
-                            <div class="rounded-2xl bg-amber-50 p-3 text-amber-600">
-                                <i data-lucide="tags" class="h-7 w-7"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ipos-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-slate-500">Estimasi Nilai Jual</p>
-                                <p class="mt-2 text-2xl font-extrabold text-emerald-600">Rp <?= number_format($totalNilai, 0, ',', '.') ?></p>
-                            </div>
-                            <div class="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
-                                <i data-lucide="trending-up" class="h-7 w-7"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ipos-card rounded-2xl p-5">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-slate-500">Status</p>
-                                <p class="mt-2 text-2xl font-extrabold text-blue-700">Online</p>
-                            </div>
-                            <div class="rounded-2xl bg-sky-50 p-3 text-sky-700">
-                                <i data-lucide="shield-check" class="h-7 w-7"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <section id="barang" class="ipos-card overflow-hidden rounded-3xl">
-                    <div class="flex items-center justify-between border-b border-slate-200/80 px-6 py-4 sm:px-8">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">Master Data</p>
-                            <h3 class="mt-1 text-xl font-bold text-slate-900">Daftar Barang</h3>
-                        </div>
-                        <div class="text-right text-xs text-slate-400">
-                            Menampilkan total <?= count($barang) ?> entri barang
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="ipos-table min-w-full text-left border-collapse">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider">ID</th>
-                                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider">Produk</th>
-                                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider">Harga Jual</th>
-                                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider">Kategori</th>
-                                    <?php if ($role === 'admin'): ?>
-                                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-right">Aksi</th>
-                                    <?php endif; ?>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 bg-white">
-                                <?php $tableColspan = $role === 'admin' ? 5 : 4; ?>
-                                <?php if (empty($barang)): ?>
-                                <tr>
-                                    <td colspan="<?= $tableColspan ?>" class="px-6 py-14 text-center text-slate-400">
-                                        <i data-lucide="archive-x" class="mx-auto mb-3 h-12 w-12 opacity-20"></i>
-                                        Belum ada data barang.
-                                    </td>
-                                </tr>
-                                <?php else: ?>
-                                <?php foreach ($barang as $row): ?>
-                                <tr class="transition-colors hover:bg-blue-50/40">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-400">
-                                        #<?= htmlspecialchars($row['id_barang']) ?>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm font-semibold text-slate-900"><?= htmlspecialchars($row['nama_barang']) ?></div>
-                                        <div class="text-[10px] uppercase tracking-[0.25em] text-slate-400">Terverifikasi</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-sm font-bold text-slate-900">Rp <?= number_format($row['harga_jual'], 0, ',', '.') ?></span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                                            <?= htmlspecialchars($row['nama_kategori'] ?? 'Tanpa Kategori') ?>
-                                        </span>
-                                    </td>
-                                    <?php if ($role === 'admin'): ?>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div class="flex justify-end gap-2">
-                                            <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>" class="inline-flex items-center justify-center rounded-xl bg-blue-50 p-2.5 text-blue-700 transition hover:bg-blue-100" title="Ubah Data">
-                                                <i data-lucide="edit-3" class="h-5 w-5"></i>
-                                            </a>
-                                            <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>" class="inline-flex items-center justify-center rounded-xl bg-red-50 p-2.5 text-red-700 transition hover:bg-red-100" title="Hapus Data">
-                                                <i data-lucide="trash-2" class="h-5 w-5"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <?php endif; ?>
-                                </tr>
-                                <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+        <!-- Data Table Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">ID</th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Produk
+                            </th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Harga
+                                Jual</th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Kategori
+                            </th>
+                            <th
+                                class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
+                                Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php if (empty($barang)): ?>
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                                <i data-lucide="archive-x" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+                                Belum ada data barang.
+                            </td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($barang as $row): ?>
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">
+                                #<?= htmlspecialchars($row['id_barang']) ?>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-semibold text-gray-900">
+                                    <?= htmlspecialchars($row['nama_barang']) ?></div>
+                                <div class="text-[10px] text-gray-400 uppercase tracking-tighter">Terverifikasi</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-gray-900">Rp
+                                    <?= number_format($row['harga_jual'], 0, ',', '.') ?></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
+                                    <?= htmlspecialchars($row['nama_kategori'] ?? 'Tanpa Kategori') ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end gap-2">
+                                    <!-- Perbaikan: Link relatif tanpa $baseUrl -->
+                                    <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
+                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        title="Ubah Data">
+                                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                                    </a>
+                                    <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
+                                        class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Hapus Data">
+                                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-        </main>
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100">
+                <p class="text-xs text-gray-400">Menampilkan total <?= count($barang) ?> entri barang.</p>
+            </div>
+        </div>
+        </div>
     </div>
 
     <script>

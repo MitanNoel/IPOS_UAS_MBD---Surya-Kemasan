@@ -1,7 +1,6 @@
 <?php
-require_once '../config/app.php';
-
-require_role('admin', 'login.php', 'index.php?status=forbidden');
+require_once '../auth/check_auth.php';
+require_once '../config/database.php';
 
 // Ambil data kategori untuk dropdown
 try {
@@ -30,6 +29,10 @@ try {
         font-family: 'Inter', sans-serif;
     }
 
+    .main-content {
+        margin-left: 16rem;
+    }
+
     @keyframes slideIn {
         from {
             transform: translate(-50%, -60%);
@@ -49,47 +52,23 @@ try {
 </head>
 
 <body class="bg-gray-50 text-gray-800 min-h-screen relative">
+    
+    <!-- Navbar -->
+    <?php require_once '../includes/navbar.php'; ?>
 
-    <!-- Popup Card -->
-    <div id="errorPopup" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white rounded-2xl shadow-2xl p-8 popup-animation border border-red-100">
-            <div class="flex flex-col items-center text-center">
-                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
-                    <i data-lucide="alert-circle" class="w-10 h-10"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Harga Tidak Valid</h3>
-                <p id="errorMessage" class="text-gray-500 text-sm mb-6 leading-relaxed">
-                    Harga barang tidak boleh kurang dari atau sama dengan nol. Silakan periksa kembali input Anda.
-                </p>
-                <button onclick="closePopup()"
-                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-100">
-                    Mengerti, Saya Perbaiki
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="main-content px-4 py-8">
+        <div class="max-w-4xl mx-auto">
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Tambah Barang Baru</h1>
                 <p class="text-gray-500 mt-1">Masukkan detail produk baru ke dalam sistem inventaris.</p>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <a href="index.php"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-all shadow-sm gap-2">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                    Kembali ke Dashboard
-                </a>
-                <a href="logout.php"
-                    class="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-black transition-all shadow-sm gap-2">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    Keluar
-                </a>
-            </div>
+            <a href="index.php"
+                class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-all shadow-sm gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Kembali ke Dashboard
+            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -258,6 +237,9 @@ try {
 
     lucide.createIcons();
     </script>
+        </div>
+    </div>
+
 </body>
 
 </html>

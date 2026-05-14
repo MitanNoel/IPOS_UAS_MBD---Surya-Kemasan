@@ -1,6 +1,0 @@
-.env
-vendor/
-node_modules/
-.DS_Store
-error_log
-template_clean.sql

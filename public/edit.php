@@ -1,7 +1,6 @@
 <?php
-require_once '../config/app.php';
-
-require_role('admin', 'login.php', 'index.php?status=forbidden');
+require_once '../auth/check_auth.php';
+require_once '../config/database.php';
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");
@@ -46,6 +45,10 @@ try {
         font-family: 'Inter', sans-serif;
     }
 
+    .main-content {
+        margin-left: 16rem;
+    }
+
     @keyframes slideIn {
         from {
             transform: translate(-50%, -60%);
@@ -65,8 +68,12 @@ try {
 </head>
 
 <body class="bg-gray-50 text-gray-800 min-h-screen">
+    
+    <!-- Navbar -->
+    <?php require_once '../includes/navbar.php'; ?>
 
-    <!-- Popup Card -->
+    <div class="main-content px-4 py-8">
+        <div class="max-w-4xl mx-auto">
     <div id="errorPopup" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
         <div
@@ -89,16 +96,10 @@ try {
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Perbarui Produk</h1>
                 <p class="text-gray-500 mt-1">Ubah detail barang untuk SKU #<?= htmlspecialchars($id) ?>.</p>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <a href="index.php"
-                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 shadow-sm gap-2">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
-                </a>
-                <a href="logout.php"
-                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-black shadow-sm gap-2">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
-                </a>
-            </div>
+            <a href="index.php"
+                class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 shadow-sm gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
+            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -195,6 +196,9 @@ try {
     });
     lucide.createIcons();
     </script>
+        </div>
+    </div>
+
 </body>
 
 </html>

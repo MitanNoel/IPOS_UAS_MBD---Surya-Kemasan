@@ -1,7 +1,5 @@
 <?php
-require_once '../config/app.php';
-
-require_role('admin', '../public/login.php', '../public/index.php?status=forbidden');
+require_once '../config/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_barang = $_POST['id_barang'] ?? '';

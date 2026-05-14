@@ -1,7 +1,6 @@
 <?php
-require_once '../config/app.php';
-
-require_role('admin', 'login.php', 'index.php?status=forbidden');
+require_once '../auth/check_auth.php';
+require_once '../config/database.php';
 
 // Kembali menggunakan redirect relatif
 if (!isset($_GET['id'])) {
