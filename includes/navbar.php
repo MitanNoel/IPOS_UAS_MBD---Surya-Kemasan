@@ -75,7 +75,7 @@
         <?php if (is_admin()): ?>
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Manajemen (Admin)</p>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors opacity-50 cursor-not-allowed">
+            <a href="../users/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 8.048M12 4.354L9.172 7.172m5.656-5.656l2.828 2.828m.176 8.48a4 4 0 110-8.048m0 8.048l2.828 2.828m-2.828-2.828l-2.828 2.828"></path>
                 </svg>
