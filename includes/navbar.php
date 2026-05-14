@@ -52,20 +52,32 @@
                 </svg>
                 <span>Data Produk</span>
             </a>
+            <a href="../inventory/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 8h6m-8 6h10M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>Inventori Stok</span>
+            </a>
         </div>
 
         <!-- Transactions Section -->
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Transaksi</p>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors opacity-50 cursor-not-allowed">
+            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v4H3V3zm0 8h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V11z"></path>
                 </svg>
-                <span>Penjualan (POS)</span>
+                <span>Penjualan</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors opacity-50 cursor-not-allowed">
+            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 6h.01M7 14h.01M7 18h.01M11 6h.01M11 14h.01M11 18h.01M15 6h.01M15 14h.01M15 18h.01"></path>
+                </svg>
+                <span>POS</span>
+            </a>
+            <a href="../purchases/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M7 3v4M17 3v4M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
                 </svg>
                 <span>Pembelian</span>
             </a>
