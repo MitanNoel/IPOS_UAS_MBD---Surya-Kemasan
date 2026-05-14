@@ -1,5 +1,6 @@
 <?php
 require_once '../auth/check_auth.php';
+require_admin();
 require_once '../config/database.php';
 
 // Kembali menggunakan redirect relatif

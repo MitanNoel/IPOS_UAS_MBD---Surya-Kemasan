@@ -3,6 +3,8 @@ require_once '../auth/check_auth.php';
 require_admin();
 require_once '../config/database.php';
 
+$currentUserId = (int) ($_SESSION['user_id'] ?? 0);
+
 try {
     $stmt = $pdo->query("SELECT * FROM user ORDER BY id_user ASC");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -87,9 +89,11 @@ $message = $statusMessages[$status] ?? '';
                                         <a href="edit.php?id=<?= urlencode($user['id_user']) ?>" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50" title="Edit">
                                             <i data-lucide="edit-3" class="w-5 h-5"></i>
                                         </a>
+                                        <?php if ((int) $user['id_user'] !== $currentUserId): ?>
                                         <a href="hapus.php?id=<?= urlencode($user['id_user']) ?>" class="p-2 rounded-lg text-red-600 hover:bg-red-50" title="Hapus">
                                             <i data-lucide="trash-2" class="w-5 h-5"></i>
                                         </a>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

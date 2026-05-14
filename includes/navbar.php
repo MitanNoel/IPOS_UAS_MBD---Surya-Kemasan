@@ -3,6 +3,25 @@
  * Navigation Sidebar Component
  * Include: <?php require_once 'includes/navbar.php'; ?>
  */
+
+$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '');
+$currentPath = ltrim($scriptName, '/');
+
+if (!function_exists('nav_is_active')) {
+    function nav_is_active($currentPath, array $targets) {
+        foreach ($targets as $target) {
+            if (substr($target, -1) === '/') {
+                if (strpos($currentPath, $target) === 0) {
+                    return true;
+                }
+            } elseif ($currentPath === $target) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
 ?>
 <nav class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white min-h-screen fixed left-0 top-0 shadow-2xl">
     <!-- Logo Section -->
@@ -27,16 +46,21 @@
                 <?= substr($user_name ?? 'U', 0, 1) ?>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold truncate"><?= htmlspecialchars($user_name ?? '') ?></p>
+                <p class="text-sm font-semibold truncate max-w-[7rem]" title="<?= htmlspecialchars($user_name ?? '') ?>"><?= htmlspecialchars($user_name ?? '') ?></p>
                 <p class="text-xs text-gray-400 capitalize"><?= htmlspecialchars($role ?? '') ?></p>
             </div>
+            <a href="../auth/logout.php" class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg text-red-300 hover:text-white hover:bg-red-600 transition-colors" title="Logout" aria-label="Logout">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </a>
         </div>
     </div>
 
     <!-- Navigation Menu -->
     <div class="px-3 py-6 space-y-2 flex-1 overflow-y-auto">
         <!-- Dashboard -->
-        <a href="../dashboard/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= (basename($_SERVER['PHP_SELF']) === 'index.php' && strpos($_SERVER['PHP_SELF'], 'dashboard') !== false) ? 'bg-purple-600' : '' ?>">
+        <a href="../dashboard/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['dashboard/index.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 4l4 2m-8-2l4-2"></path>
             </svg>
@@ -46,13 +70,15 @@
         <!-- Products Section -->
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Produk & Stok</p>
-            <a href="../public/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <?php if (is_admin()): ?>
+            <a href="../public/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['public/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m0 0l8 4m-8-4v10l8 4m0-10l8 4m-8-4v10M8 11l4 2m4-2l4-2"></path>
                 </svg>
                 <span>Data Produk</span>
             </a>
-            <a href="../inventory/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <?php endif; ?>
+            <a href="../inventory/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['inventory/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 8h6m-8 6h10M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
                 </svg>
@@ -63,37 +89,39 @@
         <!-- Transactions Section -->
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Transaksi</p>
-            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v4H3V3zm0 8h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V11z"></path>
                 </svg>
                 <span>Penjualan</span>
             </a>
-            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 6h.01M7 14h.01M7 18h.01M11 6h.01M11 14h.01M11 18h.01M15 6h.01M15 14h.01M15 18h.01"></path>
                 </svg>
                 <span>POS</span>
             </a>
-            <a href="../purchases/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <?php if (is_admin()): ?>
+            <a href="../purchases/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['purchases/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M7 3v4M17 3v4M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
                 </svg>
                 <span>Pembelian</span>
             </a>
+            <?php endif; ?>
         </div>
 
         <!-- Admin Section -->
         <?php if (is_admin()): ?>
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Manajemen (Admin)</p>
-            <a href="../users/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="../users/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['users/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 8.048M12 4.354L9.172 7.172m5.656-5.656l2.828 2.828m.176 8.48a4 4 0 110-8.048m0 8.048l2.828 2.828m-2.828-2.828l-2.828 2.828"></path>
                 </svg>
                 <span>Pengguna</span>
             </a>
-            <a href="../suppliers/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            <a href="../suppliers/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['suppliers/']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
                 </svg>
@@ -118,16 +146,6 @@
                 <span>Stok & Inventaris</span>
             </a>
         </div>
-    </div>
-
-    <!-- Logout Section -->
-    <div class="px-3 py-4 border-t border-gray-700">
-        <a href="../auth/logout.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-600 transition-colors text-red-400 hover:text-white">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            <span class="font-medium">Logout</span>
-        </a>
     </div>
 </nav>
 
