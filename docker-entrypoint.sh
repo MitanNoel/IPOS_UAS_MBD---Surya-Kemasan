@@ -1,23 +1,12 @@
 #!/bin/bash
 set -e
 
-# Create .env file from environment variables if it doesn't exist
-if [ ! -f /var/www/html/.env ]; then
-    echo "Creating .env file from environment variables..."
-    
-    cat > /var/www/html/.env << EOF
-DB_HOST=${DB_HOST:-localhost}
-DB_PORT=${DB_PORT:-3306}
-DB_DATABASE=${DB_DATABASE:-db_toko_1}
-DB_USERNAME=${DB_USERNAME:-root}
-DB_PASSWORD=${DB_PASSWORD:-}
-EOF
-    
-    # Ensure proper permissions for non-root user
-    chmod 644 /var/www/html/.env
-    
-    echo ".env file created successfully"
-fi
+# For Coolify: Environment variables are injected directly into the container
+# The PHP application reads from $_ENV which is automatically populated
+# from the injected environment variables, no .env file needed
+
+# For local development: If .env exists, it will be loaded by the PHP application
+# If you need to create one locally, it can be done manually
 
 # Verify that Apache log directory is writable
 if [ ! -w /var/log/apache2 ]; then

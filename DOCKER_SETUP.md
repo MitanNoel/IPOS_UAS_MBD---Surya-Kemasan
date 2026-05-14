@@ -66,8 +66,9 @@ docker-compose down
    - Select "Docker" as the type
    - Connect your Git repository (MitanNoel/proyekmbd)
 
-2. **Configure Environment Variables**
-   Add these in Coolify's environment section:
+2. **Configure Environment Variables (Coolify Auto-Generates)**
+   Coolify will automatically detect `.env.example` and generate a template form.
+   You can also manually add these variables in Coolify's environment section:
    ```
    DB_HOST=your-mysql-host
    DB_PORT=3306
@@ -75,6 +76,8 @@ docker-compose down
    DB_USERNAME=your_db_user
    DB_PASSWORD=your_secure_password
    ```
+   - No `.env` file is created - environment variables are injected directly into the container
+   - The PHP application reads from `$_ENV` which Coolify automatically populates
 
 3. **Database Configuration (Important)**
    - Set up MySQL/MariaDB on your server
@@ -85,6 +88,7 @@ docker-compose down
 4. **Deploy**
    - Coolify will automatically build and deploy using the Dockerfile
    - Your app will be available at your configured domain on port 8080
+   - Coolify automatically injects environment variables into the running container
 
 ## Environment Variables
 
@@ -113,9 +117,10 @@ APP_DEBUG        # true or false (default: false)
 - **Security**: Minimal permissions, proper ownership
 
 ### docker-entrypoint.sh
-- Generates `.env` file from environment variables
-- Runs on container startup
+- Container initialization script
+- Works with Coolify's automatic environment variable injection
 - Ensures proper initialization with non-root user
+- No `.env` file needed for Coolify deployments (env vars injected directly)
 
 ### docker-compose.yml
 - Local development setup with MySQL 8.0
