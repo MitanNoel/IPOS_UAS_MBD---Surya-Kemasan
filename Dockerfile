@@ -2,7 +2,7 @@ FROM php:8.1-apache
 
 # Install required PHP extensions
 RUN apt-get update && apt-get install -y \
-    libpdo-mysql \
+    default-libmysqlclient-dev \
     && docker-php-ext-install pdo pdo_mysql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
