@@ -22,8 +22,20 @@ if (!function_exists('nav_is_active')) {
         return false;
     }
 }
+
+if (!function_exists('nav_mobile_class')) {
+    function nav_mobile_class() {
+        return 'fixed left-0 top-0 z-50 w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white min-h-screen shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0';
+    }
+}
 ?>
-<nav class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white min-h-screen fixed left-0 top-0 shadow-2xl">
+<button id="navToggle" type="button" class="fixed top-4 left-4 z-[60] inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gray-900 text-white shadow-lg md:hidden" aria-label="Buka menu">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+</button>
+<div id="navOverlay" class="fixed inset-0 z-40 bg-black/50 hidden md:hidden"></div>
+<nav id="sidebarNav" class="<?= nav_mobile_class() ?>">
     <!-- Logo Section -->
     <div class="px-6 py-6 border-b border-gray-700">
         <div class="flex items-center gap-3">
@@ -58,7 +70,7 @@ if (!function_exists('nav_is_active')) {
     </div>
 
     <!-- Navigation Menu -->
-    <div class="px-3 py-6 space-y-2 flex-1 overflow-y-auto">
+    <div class="px-3 py-6 pb-10 space-y-2 flex-1 overflow-y-auto">
         <!-- Dashboard -->
         <a href="../dashboard/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['dashboard/index.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,9 +146,75 @@ if (!function_exists('nav_is_active')) {
     </div>
 </nav>
 
-<!-- Main Content Wrapper (add this class to your content) -->
 <style>
     .main-content {
         margin-left: 16rem; /* w-64 = 16rem */
     }
+
+    @media (max-width: 767px) {
+        .main-content {
+            margin-left: 0 !important;
+            padding: 1rem !important;
+        }
+
+        #sidebarNav {
+            width: min(18rem, 85vw);
+        }
+
+        #sidebarNav.nav-open {
+            transform: translateX(0);
+        }
+
+        body.nav-open {
+            overflow: hidden;
+        }
+    }
 </style>
+
+<script>
+(function() {
+    const sidebar = document.getElementById('sidebarNav');
+    const overlay = document.getElementById('navOverlay');
+    const toggle = document.getElementById('navToggle');
+
+    if (!sidebar || !overlay || !toggle) {
+        return;
+    }
+
+    function openNav() {
+        sidebar.classList.add('nav-open');
+        overlay.classList.remove('hidden');
+        document.body.classList.add('nav-open');
+    }
+
+    function closeNav() {
+        sidebar.classList.remove('nav-open');
+        overlay.classList.add('hidden');
+        document.body.classList.remove('nav-open');
+    }
+
+    toggle.addEventListener('click', function() {
+        if (sidebar.classList.contains('nav-open')) {
+            closeNav();
+        } else {
+            openNav();
+        }
+    });
+
+    overlay.addEventListener('click', closeNav);
+
+    sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 768) {
+                closeNav();
+            }
+        });
+    });
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+            closeNav();
+        }
+    });
+})();
+</script>
