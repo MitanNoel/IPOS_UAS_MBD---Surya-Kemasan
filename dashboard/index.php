@@ -63,7 +63,7 @@ try {
     $top_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Low Stock Alert (calculate stock < 5)
-    $stmt = $pdo->query("\n        SELECT b.id_barang, b.nama_barang,\n               COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) as qty_in,\n               COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as qty_out,\n               COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) -\n               COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as stok\n        FROM barang b\n        LEFT JOIN detail_pembelian dpb ON b.id_barang = dpb.id_barang\n        LEFT JOIN detail_penjualan dp ON b.id_barang = dp.id_barang\n        GROUP BY b.id_barang\n        HAVING stok < 5\n        ORDER BY stok ASC\n    ");
+    $stmt = $pdo->query("\n        SELECT\n            b.id_barang,\n            b.nama_barang,\n            COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = b.id_barang), 0) as qty_in,\n            COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = b.id_barang), 0) as qty_out,\n            COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = b.id_barang), 0) -\n            COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = b.id_barang), 0) as stok\n        FROM barang b\n        HAVING stok < 5\n        ORDER BY stok ASC, b.nama_barang ASC\n    ");
     $low_stock = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Monthly Revenue (this month)

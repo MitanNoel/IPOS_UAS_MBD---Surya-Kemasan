@@ -89,13 +89,13 @@ if (!function_exists('nav_is_active')) {
         <!-- Transactions Section -->
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Transaksi</p>
-            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/']) ? 'bg-purple-600 shadow-md' : '' ?>">
+            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/index.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v4H3V3zm0 8h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V11z"></path>
                 </svg>
                 <span>Penjualan</span>
             </a>
-            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/']) ? 'bg-purple-600 shadow-md' : '' ?>">
+            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/pos.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 6h.01M7 14h.01M7 18h.01M11 6h.01M11 14h.01M11 18h.01M15 6h.01M15 14h.01M15 18h.01"></path>
                 </svg>
@@ -130,6 +130,7 @@ if (!function_exists('nav_is_active')) {
         </div>
         <?php endif; ?>
 
+        <?php if (!is_kasir()): ?>
         <!-- Reports Section -->
         <div class="pt-2">
             <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Laporan</p>
@@ -146,6 +147,7 @@ if (!function_exists('nav_is_active')) {
                 <span>Stok & Inventaris</span>
             </a>
         </div>
+        <?php endif; ?>
     </div>
 </nav>
 

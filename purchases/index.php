@@ -13,6 +13,7 @@ try {
 $status = $_GET['status'] ?? '';
 $statusMessages = [
     'created' => 'Pembelian berhasil ditambahkan.',
+    'updated' => 'Pembelian berhasil diperbarui.',
     'deleted' => 'Pembelian berhasil dihapus.',
     'error' => 'Terjadi kesalahan saat memproses pembelian.'
 ];
@@ -70,6 +71,7 @@ $message = $statusMessages[$status] ?? '';
                                     <td class="px-6 py-3 text-right text-sm">
                                         <div class="flex justify-end gap-2">
                                             <a href="view.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50"><i data-lucide="eye" class="w-4 h-4"></i></a>
+                                            <a href="edit.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50"><i data-lucide="pencil" class="w-4 h-4"></i></a>
                                             <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus pembelian ini?');">
                                                 <input type="hidden" name="id_pembelian" value="<?= htmlspecialchars($p['id_pembelian']) ?>">
                                                 <button type="submit" class="p-2 rounded-lg text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>

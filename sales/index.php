@@ -17,6 +17,7 @@ try {
 $status = $_GET['status'] ?? '';
 $statusMessages = [
     'created' => 'Penjualan berhasil disimpan.',
+    'updated' => 'Penjualan berhasil diperbarui.',
     'deleted' => 'Penjualan berhasil dihapus.',
     'error' => 'Terjadi kesalahan saat memproses penjualan.'
 ];
@@ -43,7 +44,6 @@ $message = $statusMessages[$status] ?? '';
                 </div>
                 <div class="flex gap-2">
                     <a href="pos.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"><i data-lucide="shopping-cart" class="w-4 h-4"></i> POS</a>
-                    <a href="tambah.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200">Tambah Manual</a>
                 </div>
             </div>
 
@@ -75,10 +75,13 @@ $message = $statusMessages[$status] ?? '';
                                     <td class="px-6 py-3 text-right text-sm">
                                         <div class="flex justify-end gap-2">
                                             <a href="view.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50"><i data-lucide="eye" class="w-4 h-4"></i></a>
+                                            <?php if (is_admin()): ?>
+                                            <a href="edit.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50"><i data-lucide="pencil" class="w-4 h-4"></i></a>
                                             <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus transaksi ini?');">
                                                 <input type="hidden" name="id_penjualan" value="<?= htmlspecialchars($s['id_penjualan']) ?>">
                                                 <button type="submit" class="p-2 rounded-lg text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                             </form>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>

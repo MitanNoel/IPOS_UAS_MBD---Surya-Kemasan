@@ -16,7 +16,12 @@ $id_barangs = $_POST['id_barang'] ?? [];
 $qtys = $_POST['qty'] ?? [];
 $prices = $_POST['harga_beli'] ?? [];
 
-if ($id_pembelian <= 0 || $id_supplier <= 0 || empty($id_barangs)) {
+if ($id_pembelian <= 0 || $id_supplier <= 0 || empty($id_barangs) || count($id_barangs) !== count($qtys) || count($id_barangs) !== count($prices)) {
+    header('Location: edit.php?id=' . urlencode((string)$id_pembelian) . '&status=error');
+    exit();
+}
+
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
     header('Location: edit.php?id=' . urlencode((string)$id_pembelian) . '&status=error');
     exit();
 }
@@ -24,14 +29,45 @@ if ($id_pembelian <= 0 || $id_supplier <= 0 || empty($id_barangs)) {
 try {
     $pdo->beginTransaction();
 
-    // Recalculate total and prepare lines
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM pembelian WHERE id_pembelian = :id');
+    $stmt->execute(['id' => $id_pembelian]);
+    if ((int) $stmt->fetchColumn() === 0) {
+        $pdo->rollBack();
+        header('Location: index.php?status=error');
+        exit();
+    }
+
+    $stmt = $pdo->prepare('SELECT COUNT(*) FROM supplier WHERE id_supplier = :id');
+    $stmt->execute(['id' => $id_supplier]);
+    if ((int) $stmt->fetchColumn() === 0) {
+        $pdo->rollBack();
+        header('Location: edit.php?id=' . urlencode((string)$id_pembelian) . '&status=error');
+        exit();
+    }
+
     $total = 0.0;
     $lines = [];
+    $seen = [];
     for ($i = 0; $i < count($id_barangs); $i++) {
-        $idb = trim($id_barangs[$i]);
+        $idb = trim((string) $id_barangs[$i]);
         $q = (int) ($qtys[$i] ?? 0);
         $p = (float) ($prices[$i] ?? 0);
-        if ($idb === '' || $q <= 0) continue;
+        if ($idb === '' || $q <= 0 || $p < 0) continue;
+        if (isset($seen[$idb])) {
+            $pdo->rollBack();
+            header('Location: edit.php?id=' . urlencode((string)$id_pembelian) . '&status=error');
+            exit();
+        }
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM barang WHERE id_barang = :id');
+        $stmt->execute(['id' => $idb]);
+        if ((int) $stmt->fetchColumn() === 0) {
+            $pdo->rollBack();
+            header('Location: edit.php?id=' . urlencode((string)$id_pembelian) . '&status=error');
+            exit();
+        }
+
+        $seen[$idb] = true;
         $subtotal = $q * $p;
         $total += $subtotal;
         $lines[] = [ 'id_barang' => $idb, 'qty' => $q, 'harga_beli' => $p, 'subtotal' => $subtotal ];

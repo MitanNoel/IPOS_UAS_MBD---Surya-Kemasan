@@ -55,6 +55,8 @@ try {
                 <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200">Kembali</a>
             </div>
 
+            <?php if (($_GET['status'] ?? '') === 'error'): ?><div class="mb-4 p-3 bg-red-50 border border-red-100 text-red-700 rounded">Perubahan gagal disimpan. Periksa supplier, tanggal, dan item yang dipilih.</div><?php endif; ?>
+
             <form id="purchaseForm" action="process_update.php" method="POST" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <input type="hidden" name="id_pembelian" value="<?= htmlspecialchars($purchase['id_pembelian']) ?>">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
