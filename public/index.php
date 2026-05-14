@@ -170,7 +170,7 @@ try {
                 </div>
                 <?php endif; ?>
 
-                <?php if ($role === 'cashier'): ?>
+                <?php if (in_array($role, ['kasir', 'cashier'], true)): ?>
                 <div class="mb-8 rounded-3xl border border-sky-200 bg-sky-50 p-6 text-sky-800 shadow-sm">
                     <div class="flex items-start gap-3">
                         <div class="rounded-2xl bg-white/70 p-3 text-sky-700 shadow-sm">

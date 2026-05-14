@@ -20,9 +20,9 @@ function is_logged_in() {
 
 function login_user(array $user) {
     $_SESSION['auth_user'] = [
-        'id' => $user['id'] ?? null,
+        'id' => $user['id_user'] ?? ($user['id'] ?? null),
         'username' => $user['username'] ?? null,
-        'full_name' => $user['full_name'] ?? ($user['nama_lengkap'] ?? $user['username'] ?? 'Pengguna'),
+        'full_name' => $user['full_name'] ?? ($user['nama_lengkap'] ?? ($user['nama_user'] ?? ($user['username'] ?? 'Pengguna'))),
         'role' => strtolower((string) ($user['role'] ?? 'admin')),
     ];
 }
@@ -71,6 +71,7 @@ function role_label($role) {
 
     return match ($role) {
         'admin' => 'Admin',
+        'kasir',
         'cashier' => 'Kasir',
         default => ucfirst($role),
     };

@@ -13,7 +13,7 @@ Sesuai dengan spesifikasi tugas:
 2. **Read**: Menampilkan seluruh data barang ke dalam tabel HTML.
 3. **Update**: Mengubah data `barang` menggunakan Form.
 4. **Delete**: Menghapus data `barang` via ID URL.
-5. **Login & Role**: Masuk menggunakan akun `users` dan pembatasan akses berbasis peran `admin` / `cashier`.
+5. **Login & Role**: Masuk menggunakan akun `user` dan pembatasan akses berbasis peran `admin` / `kasir`.
 
 ## Keamanan & Standar
 - Semua query menggunakan Prepared Statements dengan named parameter (`:param`)
@@ -22,5 +22,5 @@ Sesuai dengan spesifikasi tugas:
 - Proteksi terhadap SQL Injection dengan parameter binding
 
 ## Auth Awal
-- Sistem login membaca tabel `users` dengan kolom minimum `username`, `password_hash` atau `password`, dan `role`.
-- Halaman `public/index.php` bisa dibuka oleh `admin` dan `cashier`, sedangkan halaman tambah, ubah, dan hapus hanya untuk `admin`.
+- Sistem login membaca tabel `user` dengan kolom minimum `username`, `password_hash` atau `password`, dan `role`.
+- Halaman `public/index.php` bisa dibuka oleh `admin` dan `kasir`, sedangkan halaman tambah, ubah, dan hapus hanya untuk `admin`.

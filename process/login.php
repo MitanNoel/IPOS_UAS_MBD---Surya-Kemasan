@@ -15,7 +15,7 @@ if ($username === '' || $password === '') {
 }
 
 try {
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE username = :username LIMIT 1');
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = :username LIMIT 1');
     $stmt->execute([':username' => $username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
