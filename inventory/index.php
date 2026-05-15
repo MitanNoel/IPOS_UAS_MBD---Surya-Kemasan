@@ -56,7 +56,9 @@ try {
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $items = array_values(array_filter($stmt->fetchAll(PDO::FETCH_ASSOC), function ($item) use ($stockFilter) {
+    $allItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $items = array_values(array_filter($allItems, function ($item) use ($stockFilter) {
         $stok = (int) $item['stok'];
         if ($stockFilter === 'low') {
             return $stok < 5 && $stok > 0;
@@ -70,13 +72,13 @@ try {
         return true;
     }));
 
-    $totalItems = count($items);
-    $totalStock = array_sum(array_map(static fn($item) => (int) $item['stok'], $items));
+    $totalItems = count($allItems);
+    $totalStock = array_sum(array_map(static fn($item) => (int) $item['stok'], $allItems));
     $emptyStock = 0;
     $lowStock = 0;
     $stockValue = 0;
 
-    foreach ($items as $item) {
+    foreach ($allItems as $item) {
         $stock = (int) $item['stok'];
         $stockValue += $stock * (float) $item['harga_beli'];
         if ($stock <= 0) {
