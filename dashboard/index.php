@@ -19,9 +19,11 @@ try {
     // Current Inventory Value (sum of stok value)
     $stmt = $pdo->query("
         SELECT COALESCE(SUM(
-            COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = barang.id_barang), 0) -
-            COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = barang.id_barang), 0)
-        ) * harga_beli, 0) as inventory_value
+            (
+                COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = barang.id_barang), 0) -
+                COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = barang.id_barang), 0)
+            ) * harga_beli
+        ), 0) as inventory_value
         FROM barang
     ");
     $inventory_value = $stmt->fetch(PDO::FETCH_ASSOC)['inventory_value'];
