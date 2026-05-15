@@ -2,12 +2,36 @@
 require_once '../config/database.php';
 
 try {
-    // Menggunakan JOIN untuk mengambil nama_kategori dari tabel kategori
+    // Siapkan parameter pencarian dan sortir dari query string
+    $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id_barang';
+    $order = isset($_GET['order']) && strtolower($_GET['order']) === 'asc' ? 'ASC' : 'DESC';
+
+    // Batasi kolom yang boleh di-sort untuk menghindari SQL injection
+    $allowedSort = [
+        'id_barang' => 'b.id_barang',
+        'nama_barang' => 'b.nama_barang',
+        'harga_jual' => 'b.harga_jual',
+        'nama_kategori' => 'k.nama_kategori',
+    ];
+
+    $sortColumn = isset($allowedSort[$sort]) ? $allowedSort[$sort] : $allowedSort['id_barang'];
+
+    // Bangun query dasar dengan JOIN ke kategori
     $sql = "SELECT b.*, k.nama_kategori 
             FROM barang b 
-            LEFT JOIN kategori k ON b.id_kategori = k.id_kategori 
-            ORDER BY b.id_barang DESC";
-    $stmt = $pdo->query($sql);
+            LEFT JOIN kategori k ON b.id_kategori = k.id_kategori";
+
+    $params = [];
+    if ($q !== '') {
+        $sql .= " WHERE (b.nama_barang LIKE :q OR k.nama_kategori LIKE :q)";
+        $params[':q'] = "%{$q}%";
+    }
+
+    $sql .= " ORDER BY {$sortColumn} {$order}";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $barang = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Hitung ringkasan data
@@ -15,6 +39,25 @@ try {
     $totalNilai = array_sum(array_column($barang, 'harga_jual'));
 } catch (PDOException $e) {
     die("Error database: " . $e->getMessage());
+}
+?>
+<?php
+// Helper sederhana untuk membuat link sortir sambil mempertahankan query pencarian
+function sort_link($column, $label)
+{
+    $q = isset($_GET['q']) ? $_GET['q'] : '';
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id_barang';
+    $order = isset($_GET['order']) && strtolower($_GET['order']) === 'asc' ? 'asc' : 'desc';
+
+    $newOrder = 'desc';
+    if ($sort === $column && $order === 'asc') {
+        $newOrder = 'desc';
+    } elseif ($sort === $column && $order === 'desc') {
+        $newOrder = 'asc';
+    }
+
+    $qs = http_build_query(['q' => $q, 'sort' => $column, 'order' => $newOrder]);
+    return '<a href="?' . $qs . '" class="hover:underline">' . htmlspecialchars($label) . '</a>';
 }
 ?>
 <!DOCTYPE html>
@@ -41,15 +84,24 @@ try {
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
-                <p class="text-gray-500 mt-1">Pantau stok dan kategori produk Anda secara real-time.</p>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Transaksi</h1>
+
             </div>
-            <!-- Perbaikan: Link relatif tanpa $baseUrl -->
-            <a href="tambah.php"
-                class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Tambah Barang Baru
-            </a>
+            <div class="flex items-center gap-3">
+                <!-- Perbaikan: Link relatif tanpa $baseUrl -->
+                <a href="tambah.php"
+                    class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    Tambah Barang Baru
+                </a>
+
+                <!-- Form pencarian -->
+                <form method="get" action="index.php" class="flex items-center gap-2">
+                    <input type="search" name="q" value="<?= htmlspecialchars($q) ?>"
+                        placeholder="Cari produk atau kategori" class="px-3 py-2 border rounded-lg text-sm" />
+                    <button type="submit" class="px-3 py-2 bg-slate-100 rounded-lg text-sm">Cari</button>
+                </form>
+            </div>
         </div>
 
         <!-- Statistik Section -->
@@ -81,13 +133,14 @@ try {
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-100">
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">ID</th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Produk
-                            </th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Harga
-                                Jual</th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Kategori
-                            </th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <?= sort_link('id_barang','ID') ?></th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <?= sort_link('nama_barang','Produk') ?></th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <?= sort_link('harga_jual','Harga Jual') ?></th>
+                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <?= sort_link('nama_kategori','Kategori') ?></th>
                             <th
                                 class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
                                 Aksi</th>
@@ -110,7 +163,6 @@ try {
                             <td class="px-6 py-4">
                                 <div class="text-sm font-semibold text-gray-900">
                                     <?= htmlspecialchars($row['nama_barang']) ?></div>
-                                <div class="text-[10px] text-gray-400 uppercase tracking-tighter">Terverifikasi</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-sm font-bold text-gray-900">Rp
