@@ -17,7 +17,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Catat Pembelian Baru | IPOS Sistem Toko</title>
+    <title>Catat Pembelian Baru | IPOS Toko Surya Kemasan</title>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>

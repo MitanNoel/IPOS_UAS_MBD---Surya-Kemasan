@@ -8,15 +8,15 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$id = (int) $_GET['id'];
+$id = (int)$_GET['id'];
 
 try {
-    $stmt = $pdo->prepare('SELECT * FROM supplier WHERE id_supplier = :id LIMIT 1');
+    $stmt = $pdo->prepare('SELECT * FROM kategori WHERE id_kategori = :id LIMIT 1');
     $stmt->execute(['id' => $id]);
-    $supplier = $stmt->fetch(PDO::FETCH_ASSOC);
+    $category = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$supplier) {
-        header('Location: index.php?status=error');
+    if (!$category) {
+        header('Location: index.php');
         exit();
     }
 } catch (PDOException $e) {
@@ -27,7 +27,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Edit Supplier | IPOS Toko Surya Kemasan</title>
+    <title>Edit Kategori | IPOS Toko Surya Kemasan</title>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
@@ -38,54 +38,39 @@ try {
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="edit" class="w-5.5 h-5.5 text-brand-600"></i>
-                        Edit Data Supplier
+                        <i data-lucide="folder-edit" class="w-5.5 h-5.5 text-brand-600"></i>
+                        Edit Kategori
                     </h1>
-                    <p class="text-xs text-slate-500">Perbarui rincian kontak supplier #<?= htmlspecialchars($id) ?>.</p>
+                    <p class="text-xs text-slate-500">Memperbarui nama kategori pengelompokkan.</p>
                 </div>
-                <a href="index.php" class="px-4 py-2 border rounded-xl bg-white text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
-                    Kembali
+                <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
                 </a>
             </div>
 
             <!-- Form Card -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center gap-2">
-                    <i data-lucide="file-edit" class="w-4 h-4 text-brand-600"></i>
-                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Formulir Edit Supplier</span>
+                    <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Formulir Ubah Kategori</span>
                 </div>
 
                 <form action="process_update.php" method="POST" class="p-6 space-y-5">
-                    <input type="hidden" name="id_supplier" value="<?= htmlspecialchars($supplier['id_supplier']) ?>">
-                    
-                    <!-- Nama Supplier -->
-                    <div class="space-y-2">
-                        <label for="nama_supplier" class="text-xs font-semibold text-slate-700">Nama Supplier</label>
-                        <div class="relative">
-                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="user" class="w-4 h-4"></i></span>
-                            <input 
-                                type="text" 
-                                id="nama_supplier" 
-                                name="nama_supplier" 
-                                required 
-                                value="<?= htmlspecialchars($supplier['nama_supplier']) ?>" 
-                                class="ipos-input pl-10"
-                            >
-                        </div>
-                    </div>
+                    <input type="hidden" name="id_kategori" value="<?= htmlspecialchars($category['id_kategori']) ?>">
 
-                    <!-- Nomor Telepon -->
+                    <!-- Nama Kategori -->
                     <div class="space-y-2">
-                        <label for="no_telp" class="text-xs font-semibold text-slate-700">Nomor Telepon</label>
+                        <label for="nama_kategori" class="text-xs font-semibold text-slate-700">Nama Kategori</label>
                         <div class="relative">
-                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="phone" class="w-4 h-4"></i></span>
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="folder" class="w-4 h-4"></i></span>
                             <input 
                                 type="text" 
-                                id="no_telp" 
-                                name="no_telp" 
-                                required 
-                                value="<?= htmlspecialchars($supplier['no_telp']) ?>" 
+                                id="nama_kategori" 
+                                name="nama_kategori" 
+                                value="<?= htmlspecialchars($category['nama_kategori']) ?>"
+                                required
                                 class="ipos-input pl-10"
+                                placeholder="Contoh: Plastik, Cup, Sendok, dll."
                             >
                         </div>
                     </div>

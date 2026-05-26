@@ -35,7 +35,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Detail Penjualan #<?= htmlspecialchars($sale['id_penjualan']) ?> | IPOS Toko</title>
+    <title>Detail Penjualan #<?= htmlspecialchars($sale['id_penjualan']) ?> | IPOS Toko Surya Kemasan</title>
     <style>
         @media print {
             #sidebarNav, #navToggle, #navOverlay, .no-print {
@@ -91,7 +91,7 @@ try {
                             <span class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white shadow-inner">
                                 <i data-lucide="store" class="w-4 h-4"></i>
                             </span>
-                            <span class="text-base font-extrabold text-slate-900 tracking-tight">IPOS TOKO</span>
+                            <span class="text-base font-extrabold text-slate-900 tracking-tight">TOKO SURYA KEMASAN</span>
                         </div>
                         <p class="text-xs text-slate-450">Integrated Point of Sale System</p>
                     </div>

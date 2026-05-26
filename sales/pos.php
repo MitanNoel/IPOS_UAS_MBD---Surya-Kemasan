@@ -30,7 +30,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>POS | IPOS Sistem Toko</title>
+    <title>POS | IPOS Toko Surya Kemasan</title>
     <style>
         .pos-grid-container {
             height: calc(100vh - 120px);

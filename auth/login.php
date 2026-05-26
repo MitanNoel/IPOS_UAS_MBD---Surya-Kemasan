@@ -21,7 +21,7 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
 
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Login | IPOS Sistem Toko</title>
+    <title>Login | IPOS Toko Surya Kemasan</title>
     <style>
         .login-gradient {
             background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%);
@@ -41,7 +41,7 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
                 <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm shadow-inner">
                     <i data-lucide="store" class="w-8 h-8 text-white"></i>
                 </div>
-                <h1 class="text-2xl font-bold tracking-tight">Sistem IPOS Toko</h1>
+                <h1 class="text-2xl font-bold tracking-tight">IPOS Toko Surya Kemasan</h1>
                 <p class="text-sky-100/80 text-xs mt-1">Manajemen Inventaris & Penjualan</p>
             </div>
 
@@ -117,7 +117,7 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
 
             <!-- Footer -->
             <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-400">
-                <p>&copy; 2026 IPOS Sistem Toko. All rights reserved.</p>
+                <p>&copy; 2026 IPOS Toko Surya Kemasan. All rights reserved.</p>
             </div>
         </div>
     </div>

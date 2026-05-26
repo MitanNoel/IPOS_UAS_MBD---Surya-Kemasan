@@ -27,7 +27,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Hapus User | IPOS Sistem Toko</title>
+    <title>Hapus User | IPOS Toko Surya Kemasan</title>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
     <div class="max-w-md w-full fade-in">

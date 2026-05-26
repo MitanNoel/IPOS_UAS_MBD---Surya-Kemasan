@@ -32,7 +32,7 @@ try {
 
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Data Master Produk | IPOS Sistem Toko</title>
+    <title>Data Master Produk | IPOS Toko Surya Kemasan</title>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen">

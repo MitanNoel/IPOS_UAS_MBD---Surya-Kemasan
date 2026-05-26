@@ -34,7 +34,7 @@ $message = $statusMessages[$status] ?? '';
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Riwayat Penjualan | IPOS Sistem Toko</title>
+    <title>Riwayat Penjualan | IPOS Toko Surya Kemasan</title>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>

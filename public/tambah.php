@@ -17,7 +17,7 @@ try {
 
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Tambah Produk Baru | IPOS Sistem Toko</title>
+    <title>Tambah Produk Baru | IPOS Toko Surya Kemasan</title>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen relative">

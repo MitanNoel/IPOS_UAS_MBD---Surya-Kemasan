@@ -161,7 +161,7 @@ try {
 
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Dashboard | IPOS Sistem Toko</title>
+    <title>Dashboard | IPOS Toko Surya Kemasan</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -315,7 +315,10 @@ try {
                             </div>
                         </div>
                     </div>
-                    <div class="pt-6 border-t border-slate-100 mt-6 flex justify-end">
+                    <div class="pt-6 border-t border-slate-100 mt-6 flex justify-end gap-2">
+                        <a href="../categories/index.php" class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-slate-200 bg-white text-slate-650 hover:bg-slate-50 text-xs font-semibold rounded-xl transition-colors shadow-sm">
+                            <i data-lucide="folder" class="w-4 h-4 text-slate-500"></i> Kelola Kategori
+                        </a>
                         <a href="../public/index.php" class="ipos-btn-primary text-xs flex items-center gap-1">
                             <i data-lucide="package" class="w-4 h-4"></i> Kelola Produk
                         </a>

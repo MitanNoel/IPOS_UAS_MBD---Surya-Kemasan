@@ -31,7 +31,7 @@ try {
 <html lang="id">
 <head>
     <?php require_once '../includes/header.php'; ?>
-    <title>Detail Pembelian #<?= htmlspecialchars($purchase['id_pembelian']) ?> | IPOS Sistem Toko</title>
+    <title>Detail Pembelian #<?= htmlspecialchars($purchase['id_pembelian']) ?> | IPOS Toko Surya Kemasan</title>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
