@@ -4,25 +4,22 @@ require_admin();
 require_once '../config/database.php';
 
 try {
-    // Query dengan perhitungan stok dinamis dari pembelian & penjualan
+    // Query dynamic stock calculations
     $sql = "SELECT 
                 b.*,
                 k.nama_kategori,
-                COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) as qty_in,
-                COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as qty_out,
-                COALESCE(SUM(CASE WHEN dpb.iddetail_pembelian IS NOT NULL THEN dpb.qty ELSE 0 END), 0) - 
-                COALESCE(SUM(CASE WHEN dp.iddetail_penjualan IS NOT NULL THEN dp.qty ELSE 0 END), 0) as stok,
+                COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = b.id_barang), 0) as qty_in,
+                COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = b.id_barang), 0) as qty_out,
+                (COALESCE((SELECT SUM(qty) FROM detail_pembelian WHERE id_barang = b.id_barang), 0) - 
+                 COALESCE((SELECT SUM(qty) FROM detail_penjualan WHERE id_barang = b.id_barang), 0)) as stok,
                 COALESCE((b.harga_jual - b.harga_beli), 0) as margin
             FROM barang b
             LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
-            LEFT JOIN detail_pembelian dpb ON b.id_barang = dpb.id_barang
-            LEFT JOIN detail_penjualan dp ON b.id_barang = dp.id_barang
-            GROUP BY b.id_barang
             ORDER BY b.id_barang DESC";
     $stmt = $pdo->query($sql);
     $barang = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Hitung ringkasan data
+    // Dynamic stats
     $totalBarang = count($barang);
     $totalNilai = array_sum(array_column($barang, 'harga_jual'));
     $totalStok = array_sum(array_column($barang, 'stok'));
@@ -34,140 +31,119 @@ try {
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory System | Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .main-content {
-        margin-left: 16rem;
-    }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Data Master Produk | IPOS Sistem Toko</title>
 </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     
     <!-- Navbar -->
     <?php require_once '../includes/navbar.php'; ?>
 
-    <div class="main-content px-4 py-8">
+    <div class="main-content px-4 py-8 fade-in">
         <div class="max-w-7xl mx-auto">
-        <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Inventaris</h1>
-                <p class="text-gray-500 mt-1">Pantau stok dan kategori produk Anda secara real-time.</p>
-            </div>
-            <!-- Perbaikan: Link relatif tanpa $baseUrl -->
-            <a href="tambah.php"
-                class="inline-flex items-center justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all shadow-sm hover:shadow-md gap-2">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Tambah Barang Baru
-            </a>
-        </div>
-
-        <!-- Statistik Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                    <i data-lucide="package" class="w-8 h-8"></i>
-                </div>
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Total Item</p>
-                    <p class="text-2xl font-bold"><?= $totalBarang ?> <span
-                            class="text-sm font-normal text-gray-400">Unit</span></p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+                        <span class="w-2.5 h-7 bg-brand-600 rounded-full inline-block"></span>
+                        Data Master Produk
+                    </h1>
+                    <p class="text-slate-500 text-sm mt-1">Kelola data barang dagangan, harga jual/beli, dan kategori produk toko.</p>
                 </div>
+                <a href="tambah.php" class="ipos-btn-primary text-xs">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambah Produk Baru
+                </a>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i data-lucide="trending-up" class="w-8 h-8"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">Estimasi Nilai Jual</p>
-                    <p class="text-2xl font-bold text-emerald-600">Rp <?= number_format($totalNilai, 0, ',', '.') ?></p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Data Table Card -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-100">
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">ID</th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Produk
-                            </th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Harga
-                                Jual</th>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500">Kategori
-                            </th>
-                            <th
-                                class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
-                                Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <?php if (empty($barang)): ?>
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-400">
-                                <i data-lucide="archive-x" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
-                                Belum ada data barang.
-                            </td>
-                        </tr>
-                        <?php else: ?>
-                        <?php foreach ($barang as $row): ?>
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">
-                                #<?= htmlspecialchars($row['id_barang']) ?>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-semibold text-gray-900">
-                                    <?= htmlspecialchars($row['nama_barang']) ?></div>
-                                <div class="text-[10px] text-gray-400 uppercase tracking-tighter">Terverifikasi</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-gray-900">Rp
-                                    <?= number_format($row['harga_jual'], 0, ',', '.') ?></span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
-                                    <?= htmlspecialchars($row['nama_kategori'] ?? 'Tanpa Kategori') ?>
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex justify-end gap-2">
-                                    <!-- Perbaikan: Link relatif tanpa $baseUrl -->
-                                    <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
-                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                        title="Ubah Data">
-                                        <i data-lucide="edit-3" class="w-5 h-5"></i>
-                                    </a>
-                                    <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
-                                        class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        title="Hapus Data">
-                                        <i data-lucide="trash-2" class="w-5 h-5"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <!-- Stats Panel -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="p-3.5 bg-brand-50 text-brand-650 rounded-xl">
+                        <i data-lucide="package" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Total Jenis Barang</p>
+                        <p class="text-xl font-extrabold text-slate-850 mt-0.5"><?= $totalBarang ?> <span class="text-xs font-normal text-slate-400">Item</span></p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="p-3.5 bg-emerald-50 text-emerald-650 rounded-xl">
+                        <i data-lucide="calculator" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Akumulasi Nilai Jual</p>
+                        <p class="text-xl font-extrabold text-emerald-700 mt-0.5">Rp <?= number_format($totalNilai, 0, ',', '.') ?></p>
+                    </div>
+                </div>
             </div>
-            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100">
-                <p class="text-xs text-gray-400">Menampilkan total <?= count($barang) ?> entri barang.</p>
+
+            <!-- Data Table Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">Kode SKU</th>
+                                <th class="px-6 py-4">Nama Produk</th>
+                                <th class="px-6 py-4">Harga Beli</th>
+                                <th class="px-6 py-4">Harga Jual</th>
+                                <th class="px-6 py-4">Kategori</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <?php if (empty($barang)): ?>
+                            <tr>
+                                <td colspan="6" class="px-6 py-16 text-center text-slate-400">
+                                    <i data-lucide="package-x" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+                                    Belum ada data produk di master data.
+                                </td>
+                            </tr>
+                            <?php else: ?>
+                            <?php foreach ($barang as $row): ?>
+                            <tr class="hover:bg-slate-50/30 transition-colors">
+                                <td class="px-6 py-4 font-mono font-bold text-slate-500">
+                                    #<?= htmlspecialchars($row['id_barang']) ?>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    <?= htmlspecialchars($row['nama_barang']) ?>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-slate-600">
+                                    Rp <?= number_format($row['harga_beli'], 0, ',', '.') ?>
+                                </td>
+                                <td class="px-6 py-4 font-extrabold text-slate-900 text-sm">
+                                    Rp <?= number_format($row['harga_jual'], 0, ',', '.') ?>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-brand-50 text-brand-700 border border-brand-100/50">
+                                        <?= htmlspecialchars($row['nama_kategori'] ?? 'Umum') ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-1">
+                                        <a href="edit.php?id=<?= urlencode($row['id_barang']) ?>"
+                                            class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                                            title="Ubah Data">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        </a>
+                                        <a href="hapus.php?id=<?= urlencode($row['id_barang']) ?>"
+                                            class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Hapus Data">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-slate-400 font-medium">
+                    Total master data: <?= count($barang) ?> produk.
+                </div>
             </div>
-        </div>
         </div>
     </div>
 

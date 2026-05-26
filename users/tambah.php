@@ -1,72 +1,132 @@
 <?php
 require_once '../auth/check_auth.php';
 require_admin();
+require_once '../config/database.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah User | Sistem Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .main-content { margin-left: 16rem; }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Tambah Pengguna | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
-    <div class="main-content px-4 py-8">
-        <div class="max-w-3xl mx-auto">
-            <div class="flex items-center justify-between gap-4 mb-8">
+    
+    <div class="main-content px-4 py-8 fade-in">
+        <div class="max-w-xl mx-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Tambah User</h1>
-                    <p class="text-gray-500 mt-1">Buat akun admin atau kasir baru.</p>
+                    <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-5.5 h-5.5 text-brand-600"></i>
+                        Tambah Pengguna Baru
+                    </h1>
+                    <p class="text-xs text-slate-500">Mendaftarkan hak login staf baru.</p>
                 </div>
-                <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <a href="index.php" class="px-4 py-2 border rounded-xl bg-white text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
                     Kembali
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                    <h2 class="font-semibold text-gray-800">Form User</h2>
+            <!-- Form Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Formulir Otorisasi Login</span>
                 </div>
-                <form action="process_insert.php" method="POST" class="p-6 grid grid-cols-1 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="nama_user">Nama User</label>
-                        <input id="nama_user" name="nama_user" type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Nama lengkap user">
+
+                <form action="process_insert.php" method="POST" class="p-6 space-y-5">
+                    <!-- Nama Lengkap -->
+                    <div class="space-y-2">
+                        <label for="nama_user" class="text-xs font-semibold text-slate-700">Nama Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="user" class="w-4 h-4"></i></span>
+                            <input 
+                                type="text" 
+                                id="nama_user" 
+                                name="nama_user" 
+                                required
+                                class="ipos-input pl-10"
+                                placeholder="Contoh: Farhan A."
+                            >
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="username">Username</label>
-                        <input id="username" name="username" type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="username">
+
+                    <!-- Username -->
+                    <div class="space-y-2">
+                        <label for="username" class="text-xs font-semibold text-slate-700">Username Login</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="user-check" class="w-4 h-4"></i></span>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                required
+                                class="ipos-input pl-10 lowercase font-semibold text-slate-700"
+                                placeholder="Contoh: farhan"
+                            >
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="password">Password</label>
-                        <input id="password" name="password" type="password" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="password">
+
+                    <!-- Password -->
+                    <div class="space-y-2">
+                        <label for="password" class="text-xs font-semibold text-slate-700">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="key" class="w-4 h-4"></i></span>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                required
+                                class="ipos-input pl-10"
+                                placeholder="Masukkan password pengguna"
+                            >
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="role">Role</label>
-                        <select id="role" name="role" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none bg-white">
-                            <option value="">Pilih role</option>
-                            <option value="admin">admin</option>
-                            <option value="kasir">kasir</option>
-                        </select>
+
+                    <!-- Role Selection -->
+                    <div class="space-y-2">
+                        <label for="role" class="text-xs font-semibold text-slate-700">Pilih Hak Akses Role</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="shield" class="w-4 h-4"></i></span>
+                            <select 
+                                id="role" 
+                                name="role" 
+                                required 
+                                class="ipos-input pl-10 appearance-none bg-white pr-10"
+                            >
+                                <option value="" disabled selected>-- Pilih Role --</option>
+                                <option value="admin">Admin</option>
+                                <option value="kasir">Kasir (Cashier)</option>
+                            </select>
+                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 pt-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors">
-                            <i data-lucide="save" class="w-5 h-5"></i>
-                            Simpan
+
+                    <!-- Buttons -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center gap-3">
+                        <button 
+                            type="submit"
+                            class="flex-1 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-all shadow-md shadow-brand-500/10 hover:shadow-lg flex items-center justify-center gap-2 text-xs"
+                        >
+                            <i data-lucide="save" class="w-4.5 h-4.5"></i> Simpan Pengguna
                         </button>
-                        <a href="index.php" class="px-5 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">Batal</a>
+                        <a 
+                            href="index.php"
+                            class="px-5 py-3 bg-slate-100 text-slate-650 font-bold rounded-xl hover:bg-slate-200 transition-colors text-xs text-center border border-slate-200"
+                        >
+                            Batal
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <script>lucide.createIcons();</script>
+
+    <script>
+    lucide.createIcons();
+    </script>
 </body>
 </html>

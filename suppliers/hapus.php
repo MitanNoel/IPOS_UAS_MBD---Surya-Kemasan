@@ -26,46 +26,63 @@ try {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hapus Supplier | Sistem Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Hapus Supplier | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl border border-red-100 overflow-hidden">
-        <div class="bg-red-50 px-8 py-10 text-center">
-            <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i data-lucide="trash-2" class="w-10 h-10"></i>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full fade-in">
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-red-100 overflow-hidden">
+            <!-- Header warning section -->
+            <div class="bg-red-50/70 border-b border-red-100/50 px-6 py-8 text-center">
+                <div class="w-16 h-16 bg-red-100 text-red-650 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-205 shadow-inner">
+                    <i data-lucide="trash-2" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 leading-tight">Hapus Supplier?</h2>
+                <p class="text-red-700 font-semibold text-[9px] uppercase tracking-wider mt-1.5">Tindakan ini tidak bisa dibatalkan</p>
             </div>
-            <h2 class="text-2xl font-extrabold text-gray-900">Hapus Supplier?</h2>
-            <p class="text-red-600/70 text-sm mt-2 uppercase tracking-widest text-[10px]">Tindakan ini permanen</p>
-        </div>
-        <div class="px-8 py-6 border-y border-gray-50 space-y-4">
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Nama</span>
-                <span class="font-bold text-gray-900"><?= htmlspecialchars($supplier['nama_supplier']) ?></span>
+
+            <!-- Details -->
+            <div class="px-6 py-5 border-b border-slate-100">
+                <div class="bg-slate-50 rounded-xl p-4 space-y-3.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Nama Supplier</span>
+                        <span class="font-bold text-slate-800"><?= htmlspecialchars($supplier['nama_supplier']) ?></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Nomor Telepon</span>
+                        <span class="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 text-[10px] font-bold text-slate-650">
+                            <?= htmlspecialchars($supplier['no_telp']) ?>
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">No. Telp</span>
-                <span class="font-mono bg-gray-50 px-2 py-1 rounded border border-gray-200 text-xs text-gray-700"><?= htmlspecialchars($supplier['no_telp']) ?></span>
+
+            <!-- Action buttons -->
+            <div class="p-6 space-y-2">
+                <form action="process_delete.php" method="POST">
+                    <input type="hidden" name="id_supplier" value="<?= htmlspecialchars($supplier['id_supplier']) ?>">
+                    <button 
+                        type="submit"
+                        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-md shadow-red-500/10 hover:shadow-lg flex items-center justify-center gap-1.5 text-xs"
+                    >
+                        <i data-lucide="check" class="w-4 h-4"></i> Hapus Sekarang
+                    </button>
+                </form>
+                <a 
+                    href="index.php" 
+                    class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 font-bold rounded-xl transition-colors flex items-center justify-center border border-slate-200 text-xs"
+                >
+                    Batalkan
+                </a>
             </div>
         </div>
-        <div class="px-8 py-6 flex items-center gap-3">
-            <form action="process_delete.php" method="POST" class="flex-1">
-                <input type="hidden" name="id_supplier" value="<?= htmlspecialchars($supplier['id_supplier']) ?>">
-                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    Ya, Hapus
-                </button>
-            </form>
-            <a href="index.php" class="px-5 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">Batal</a>
-        </div>
+        
+        <p class="text-center text-slate-400 text-[9px] mt-6 font-bold uppercase tracking-widest">
+            IPOS Sistem Toko &bull; Master Data
+        </p>
     </div>
+    
     <script>lucide.createIcons();</script>
 </body>
 </html>

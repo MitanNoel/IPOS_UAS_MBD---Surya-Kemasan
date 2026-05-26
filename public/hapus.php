@@ -3,7 +3,6 @@ require_once '../auth/check_auth.php';
 require_admin();
 require_once '../config/database.php';
 
-// Kembali menggunakan redirect relatif
 if (!isset($_GET['id'])) {
     header("Location: index.php");
     exit();
@@ -33,84 +32,69 @@ try {
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konfirmasi Hapus | Inventory System</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Konfirmasi Hapus Produk | IPOS Sistem Toko</title>
 </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-md w-full">
-        <!-- Kartu Konfirmasi Modern -->
-        <div class="bg-white rounded-2xl shadow-2xl border border-red-100 overflow-hidden transform transition-all">
-            <!-- Bagian Header Peringatan -->
-            <div class="bg-red-50 px-8 py-10 text-center">
-                <div
-                    class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-red-50">
-                    <i data-lucide="trash-2" class="w-10 h-10"></i>
+    <div class="max-w-md w-full fade-in">
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-red-100 overflow-hidden">
+            <!-- Header Warning Section -->
+            <div class="bg-red-50/70 border-b border-red-100/50 px-6 py-8 text-center">
+                <div class="w-16 h-16 bg-red-100 text-red-650 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-200 shadow-inner">
+                    <i data-lucide="trash-2" class="w-8 h-8"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-gray-900 leading-tight">Hapus Barang?</h2>
-                <p class="text-red-600/70 text-sm mt-2 font-medium uppercase tracking-widest text-[10px]">Tindakan ini
-                    permanen dan tidak bisa dibatalkan</p>
+                <h2 class="text-xl font-bold text-slate-900 leading-tight">Hapus Produk?</h2>
+                <p class="text-red-700 font-semibold text-[9px] uppercase tracking-wider mt-1.5">Tindakan ini tidak bisa dibatalkan</p>
             </div>
 
-            <!-- Detail Barang -->
-            <div class="px-8 py-6 border-y border-gray-50">
-                <div class="bg-gray-50 p-5 rounded-xl space-y-4">
-                    <div class="flex justify-between items-start text-sm">
-                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Nama Barang</span>
-                        <span
-                            class="font-bold text-gray-900 text-right"><?= htmlspecialchars($data['nama_barang']) ?></span>
+            <!-- Product Details Summary -->
+            <div class="px-6 py-5 border-b border-slate-100">
+                <div class="bg-slate-50 rounded-xl p-4 space-y-3.5 text-xs">
+                    <div class="flex justify-between items-start">
+                        <span class="text-slate-400 font-medium">Nama Produk</span>
+                        <span class="font-bold text-slate-800 text-right max-w-[180px] truncate" title="<?= htmlspecialchars($data['nama_barang']) ?>"><?= htmlspecialchars($data['nama_barang']) ?></span>
                     </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">SKU / ID</span>
-                        <span
-                            class="font-mono bg-white px-2 py-1 rounded border border-gray-200 text-[10px] font-bold text-gray-600">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">SKU Kode</span>
+                        <span class="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 text-[10px] font-bold text-slate-650">
                             #<?= htmlspecialchars($data['id_barang']) ?>
                         </span>
                     </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Kategori</span>
-                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[11px] font-bold uppercase">
-                            <?= htmlspecialchars($data['nama_kategori'] ?? 'Tanpa Kategori') ?>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Kategori</span>
+                        <span class="px-2 py-0.5 bg-brand-50 text-brand-700 border border-brand-100/50 rounded-lg text-[10px] font-bold uppercase">
+                            <?= htmlspecialchars($data['nama_kategori'] ?? 'Umum') ?>
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Tombol Aksi -->
-            <div class="p-8 space-y-3">
-                <!-- Action kembali ke path relatif -->
+            <!-- Action Buttons -->
+            <div class="p-6 space-y-2">
                 <form action="../process/delete.php" method="POST">
                     <input type="hidden" name="id_barang" value="<?= htmlspecialchars($data['id_barang']) ?>">
-                    <button type="submit"
-                        class="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-100 flex items-center justify-center gap-2 group">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                        Ya, Hapus Sekarang
+                    <button 
+                        type="submit"
+                        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-md shadow-red-500/10 hover:shadow-lg flex items-center justify-center gap-1.5 text-xs"
+                    >
+                        <i data-lucide="check" class="w-4 h-4"></i> Hapus Sekarang
                     </button>
                 </form>
 
-                <!-- Link kembali ke index relatif -->
-                <a href="index.php"
-                    class="w-full py-4 bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold rounded-xl transition-all flex items-center justify-center border border-gray-200">
+                <a 
+                    href="index.php"
+                    class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 font-bold rounded-xl transition-colors flex items-center justify-center border border-slate-200 text-xs"
+                >
                     Batalkan
                 </a>
             </div>
         </div>
 
-        <p class="text-center text-gray-400 text-[10px] mt-6 font-medium uppercase tracking-widest">
-            Sistem Inventaris • Manajemen Data Kelompok
+        <p class="text-center text-slate-400 text-[9px] mt-6 font-bold uppercase tracking-widest">
+            IPOS Sistem Toko &bull; Master Data
         </p>
     </div>
 

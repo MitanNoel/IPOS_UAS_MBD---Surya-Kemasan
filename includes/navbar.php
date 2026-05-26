@@ -29,120 +29,156 @@ if (!function_exists('nav_mobile_class')) {
     }
 }
 ?>
-<button id="navToggle" type="button" class="fixed top-4 left-4 z-[60] inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gray-900 text-white shadow-lg md:hidden" aria-label="Buka menu">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
+<?php
+/**
+ * Navigation Sidebar Component
+ * Include: <?php require_once 'includes/navbar.php'; ?>
+ */
+
+$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '');
+$currentPath = ltrim($scriptName, '/');
+
+if (!function_exists('nav_is_active')) {
+    function nav_is_active($currentPath, array $targets) {
+        foreach ($targets as $target) {
+            if (substr($target, -1) === '/') {
+                if (strpos($currentPath, $target) === 0) {
+                    return true;
+                }
+            } elseif ($currentPath === $target) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('nav_mobile_class')) {
+    function nav_mobile_class() {
+        return 'fixed left-0 top-0 z-50 w-64 bg-slate-900 text-slate-100 min-h-screen shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 flex flex-col border-r border-slate-800';
+    }
+}
+?>
+<!-- Mobile Menu Trigger -->
+<button id="navToggle" type="button" class="fixed top-4 left-4 z-[60] inline-flex items-center justify-center w-11 h-11 rounded-xl bg-slate-900 text-slate-100 shadow-lg md:hidden hover:bg-slate-800 transition-colors" aria-label="Buka menu">
+    <i data-lucide="menu" class="w-5 h-5"></i>
 </button>
-<div id="navOverlay" class="fixed inset-0 z-40 bg-black/50 hidden md:hidden"></div>
+<div id="navOverlay" class="fixed inset-0 z-40 bg-slate-950/60 hidden md:hidden backdrop-blur-sm"></div>
+
 <nav id="sidebarNav" class="<?= nav_mobile_class() ?>">
     <!-- Logo Section -->
-    <div class="px-6 py-6 border-b border-gray-700">
+    <div class="px-6 py-5 border-b border-slate-850 bg-slate-950/20">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
+            <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-brand-500/10">
+                <i data-lucide="store" class="w-5 h-5"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold">Sistem Toko</h1>
-                <p class="text-xs text-gray-400">Manajemen Inventaris</p>
+                <h1 class="text-lg font-bold text-white tracking-tight">IPOS Toko</h1>
+                <p class="text-xs text-brand-400 font-medium">Sistem Manajemen</p>
             </div>
         </div>
     </div>
 
-    <!-- User Info -->
-    <div class="px-6 py-4 border-b border-gray-700">
+    <!-- User Info Section -->
+    <div class="px-6 py-4 border-b border-slate-850 bg-slate-950/10">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold">
-                <?= substr($user_name ?? 'U', 0, 1) ?>
+            <div class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center text-brand-400 font-bold text-sm">
+                <?= strtoupper(substr($user_name ?? 'U', 0, 2)) ?>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold truncate max-w-[7rem]" title="<?= htmlspecialchars($user_name ?? '') ?>"><?= htmlspecialchars($user_name ?? '') ?></p>
-                <p class="text-xs text-gray-400 capitalize"><?= htmlspecialchars($role ?? '') ?></p>
+                <p class="text-sm font-semibold text-white truncate" title="<?= htmlspecialchars($user_name ?? '') ?>">
+                    <?= htmlspecialchars($user_name ?? '') ?>
+                </p>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                    <p class="text-xs text-slate-400 capitalize font-medium"><?= htmlspecialchars($role ?? '') ?></p>
+                </div>
             </div>
-            <a href="../auth/logout.php" class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg text-red-300 hover:text-white hover:bg-red-600 transition-colors" title="Logout" aria-label="Logout">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
+            <a href="../auth/logout.php" class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all" title="Logout" aria-label="Logout">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
             </a>
         </div>
     </div>
 
     <!-- Navigation Menu -->
-    <div class="px-3 py-6 pb-10 space-y-2 flex-1 overflow-y-auto">
-        <!-- Dashboard -->
-        <a href="../dashboard/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['dashboard/index.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 4l4 2m-8-2l4-2"></path>
-            </svg>
-            <span class="font-medium">Dashboard</span>
-        </a>
-
-        <!-- Products Section -->
-        <div class="pt-2">
-            <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Produk & Stok</p>
-            <?php if (is_admin()): ?>
-            <a href="../public/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['public/']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m0 0l8 4m-8-4v10l8 4m0-10l8 4m-8-4v10M8 11l4 2m4-2l4-2"></path>
-                </svg>
-                <span>Data Produk</span>
-            </a>
-            <?php endif; ?>
-            <a href="../inventory/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['inventory/']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-6 8h6m-8 6h10M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
-                </svg>
-                <span>Inventori Stok</span>
+    <div class="px-4 py-4 space-y-5 flex-1 overflow-y-auto">
+        <!-- Main Navigation Group -->
+        <div class="space-y-1">
+            <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menu Utama</p>
+            
+            <!-- Dashboard -->
+            <a href="../dashboard/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['dashboard/index.php']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span class="text-sm">Dashboard</span>
             </a>
         </div>
 
-        <!-- Transactions Section -->
-        <div class="pt-2">
-            <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Transaksi</p>
-            <a href="../sales/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/index.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v4H3V3zm0 8h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V11z"></path>
-                </svg>
-                <span>Penjualan</span>
+        <!-- Transactions Navigation Group -->
+        <div class="space-y-1">
+            <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Transaksi Kasir</p>
+            
+            <!-- POS -->
+            <a href="../sales/pos.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['sales/pos.php']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                <span class="text-sm">Point of Sale (POS)</span>
             </a>
-            <a href="../sales/pos.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['sales/pos.php']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 6h.01M7 14h.01M7 18h.01M11 6h.01M11 14h.01M11 18h.01M15 6h.01M15 14h.01M15 18h.01"></path>
-                </svg>
-                <span>POS</span>
+            
+            <!-- Penjualan -->
+            <a href="../sales/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['sales/index.php']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+                <span class="text-sm">Riwayat Penjualan</span>
             </a>
+        </div>
+
+        <!-- Inventory Navigation Group -->
+        <div class="space-y-1">
+            <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Produk & Inventori</p>
+            
+            <!-- Inventori Stok -->
+            <a href="../inventory/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['inventory/']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="boxes" class="w-4 h-4"></i>
+                <span class="text-sm">Inventori Stok</span>
+            </a>
+
+            <!-- Data Produk (Admin Only) -->
             <?php if (is_admin()): ?>
-            <a href="../purchases/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['purchases/']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M7 3v4M17 3v4M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path>
-                </svg>
-                <span>Pembelian</span>
+            <a href="../public/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['public/']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                <span class="text-sm">Data Produk</span>
             </a>
             <?php endif; ?>
         </div>
 
-        <!-- Admin Section -->
+        <!-- Master Data Navigation Group (Admin Only) -->
         <?php if (is_admin()): ?>
-        <div class="pt-2">
-            <p class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Manajemen (Admin)</p>
-            <a href="../users/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['users/']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 8.048M12 4.354L9.172 7.172m5.656-5.656l2.828 2.828m.176 8.48a4 4 0 110-8.048m0 8.048l2.828 2.828m-2.828-2.828l-2.828 2.828"></path>
-                </svg>
-                <span>Pengguna</span>
+        <div class="space-y-1">
+            <p class="px-3 mb-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Master Data (Admin)</p>
+            
+            <!-- Pembelian -->
+            <a href="../purchases/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['purchases/']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="package-plus" class="w-4 h-4"></i>
+                <span class="text-sm">Pembelian</span>
             </a>
-            <a href="../suppliers/index.php" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors <?= nav_is_active($currentPath, ['suppliers/']) ? 'bg-purple-600 shadow-md' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
-                </svg>
-                <span>Supplier</span>
+            
+            <!-- Supplier -->
+            <a href="../suppliers/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['suppliers/']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="truck" class="w-4 h-4"></i>
+                <span class="text-sm">Supplier</span>
+            </a>
+            
+            <!-- Pengguna -->
+            <a href="../users/index.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all <?= nav_is_active($currentPath, ['users/']) ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-600/10' : '' ?>">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span class="text-sm">Pengguna Toko</span>
             </a>
         </div>
         <?php endif; ?>
+    </div>
 
-        
+    <!-- Footer Copyright -->
+    <div class="p-4 border-t border-slate-850 bg-slate-950/20 text-center">
+        <p class="text-[10px] text-slate-500">&copy; 2026 IPOS Sistem Toko v1.0</p>
     </div>
 </nav>
 
@@ -154,7 +190,7 @@ if (!function_exists('nav_mobile_class')) {
     @media (max-width: 767px) {
         .main-content {
             margin-left: 0 !important;
-            padding: 1rem !important;
+            padding: 1.25rem !important;
         }
 
         #sidebarNav {
@@ -218,3 +254,4 @@ if (!function_exists('nav_mobile_class')) {
     });
 })();
 </script>
+

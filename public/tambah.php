@@ -16,199 +16,187 @@ try {
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Barang | Inventory System</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .main-content {
-        margin-left: 16rem;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translate(-50%, -60%);
-            opacity: 0;
-        }
-
-        to {
-            transform: translate(-50%, -50%);
-            opacity: 1;
-        }
-    }
-
-    .popup-animation {
-        animation: slideIn 0.3s ease-out forwards;
-    }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Tambah Produk Baru | IPOS Sistem Toko</title>
 </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen relative">
+<body class="bg-slate-50 text-slate-800 min-h-screen relative">
     
     <!-- Navbar -->
     <?php require_once '../includes/navbar.php'; ?>
 
-    <div class="main-content px-4 py-8">
-        <div class="max-w-4xl mx-auto">
-        <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Tambah Barang Baru</h1>
-                <p class="text-gray-500 mt-1">Masukkan detail produk baru ke dalam sistem inventaris.</p>
+    <div class="main-content px-4 py-8 fade-in">
+        <!-- Error Popup (Validasi Harga) -->
+        <div id="errorPopup" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 backdrop-blur-sm">
+            <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 border border-slate-100 text-center fade-in">
+                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-100">
+                    <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-950 mb-2">Input Tidak Valid</h3>
+                <p class="text-slate-500 text-xs mb-6">Harga jual dan harga beli harus bernilai positif (lebih besar dari nol).</p>
+                <button onclick="document.getElementById('errorPopup').classList.add('hidden')"
+                    class="w-full py-2.5 bg-red-650 hover:bg-red-750 text-white font-bold rounded-xl transition-all shadow-md shadow-red-500/10">
+                    Perbaiki Data
+                </button>
             </div>
-            <a href="index.php"
-                class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 transition-all shadow-sm gap-2">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                Kembali ke Dashboard
-            </a>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Information Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="bg-emerald-50 p-6 rounded-xl border border-emerald-100">
-                    <div class="flex items-center gap-3 mb-4 text-emerald-700 font-bold">
-                        <i data-lucide="shield-check" class="w-5 h-5"></i>
-                        Validasi Data
-                    </div>
-                    <p class="text-sm text-emerald-600 leading-relaxed mb-4">
-                        Pastikan <strong>ID Barang</strong> bersifat unik. Pilih <strong>Kategori</strong> yang sesuai
-                        agar laporan stok akurat.
-                    </p>
+        <div class="max-w-4xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i data-lucide="package-plus" class="w-6 h-6 text-brand-600"></i>
+                        Tambah Produk Baru
+                    </h1>
+                    <p class="text-slate-500 text-xs mt-1">Masukkan detail spesifikasi produk baru ke dalam database master.</p>
                 </div>
-
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <h3 class="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wider text-emerald-600">Daftar
-                        Kategori</h3>
-                    <p class="text-xs text-gray-400 mb-3 italic">Nama kategori saat ini:</p>
-                    <div class="flex flex-wrap gap-2">
-                        <?php foreach($list_kategori as $kat): ?>
-                        <span class="px-2 py-1 bg-gray-100 rounded text-[10px] text-gray-600 border border-gray-200">
-                            <?= htmlspecialchars($kat['nama_kategori']) ?>
-                        </span>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
+                <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
+                </a>
             </div>
 
-            <!-- Form Card -->
-            <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="bg-gray-50 px-8 py-4 border-b border-gray-100 flex items-center gap-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i>
-                        <span class="text-sm font-bold text-gray-700 uppercase tracking-wider">Formulir Entry
-                            Barang</span>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sidebar pedoman validasi -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5">
+                        <div class="flex items-center gap-2 mb-3 text-brand-800 font-bold text-xs uppercase tracking-wider">
+                            <i data-lucide="check-square" class="w-4 h-4 text-brand-650"></i>
+                            Panduan Input
+                        </div>
+                        <p class="text-xs text-brand-700 leading-relaxed">
+                            Pastikan <strong>ID Barang / SKU</strong> diisi dengan format unik dan belum terdaftar. Tentukan kategori produk dengan tepat demi ketertiban laporan inventory.
+                        </p>
                     </div>
 
-                    <form id="insertForm" action="../process/insert.php" method="POST" class="p-8 space-y-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <h3 class="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider text-brand-650">Kategori Aktif</h3>
+                        <div class="flex flex-wrap gap-1.5">
+                            <?php foreach($list_kategori as $kat): ?>
+                            <span class="px-2.5 py-0.5 bg-slate-50 rounded-lg text-[10px] text-slate-600 border border-slate-100">
+                                <?= htmlspecialchars($kat['nama_kategori']) ?>
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- ID Barang -->
-                        <div class="space-y-2">
-                            <label for="id_barang" class="text-sm font-semibold text-gray-700">ID Barang / SKU</label>
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="fingerprint"
-                                        class="w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors"></i>
-                                </div>
-                                <input type="text" id="id_barang" name="id_barang" required
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900 font-mono"
-                                    placeholder="Misal: BRG-001">
-                            </div>
+                <!-- Form Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+                            <i data-lucide="file-edit" class="w-4 h-4 text-brand-600"></i>
+                            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Formulir Pendaftaran Barang</span>
                         </div>
 
-                        <!-- Nama Barang -->
-                        <div class="space-y-2">
-                            <label for="nama_barang" class="text-sm font-semibold text-gray-700">Nama Lengkap
-                                Barang</label>
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="box"
-                                        class="w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors"></i>
-                                </div>
-                                <input type="text" id="nama_barang" name="nama_barang" required
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900"
-                                    placeholder="Contoh: Plastik HD 15x30">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Harga Jual -->
+                        <form id="insertForm" action="../process/insert.php" method="POST" class="p-6 space-y-5">
+                            <!-- ID Barang -->
                             <div class="space-y-2">
-                                <label for="harga_jual" class="text-sm font-semibold text-gray-700 font-bold">Harga Jual
-                                    (IDR)</label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-400 font-bold text-sm italic">Rp</span>
-                                    </div>
-                                    <input type="number" id="harga_jual" name="harga_jual" required
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900 font-bold"
-                                        placeholder="0">
+                                <label for="id_barang" class="text-xs font-semibold text-slate-700">Kode SKU / ID Barang</label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="fingerprint" class="w-4 h-4"></i></span>
+                                    <input 
+                                        type="text" 
+                                        id="id_barang" 
+                                        name="id_barang" 
+                                        required
+                                        class="ipos-input pl-10 font-mono text-slate-800 uppercase"
+                                        placeholder="CONTOH: BRG-001"
+                                    >
                                 </div>
                             </div>
 
-                            <!-- Harga Beli -->
+                            <!-- Nama Barang -->
                             <div class="space-y-2">
-                                <label for="harga_beli" class="text-sm font-semibold text-gray-700">Harga Beli
-                                    (IDR)</label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-400 font-bold text-sm italic">Rp</span>
+                                <label for="nama_barang" class="text-xs font-semibold text-slate-700">Nama Lengkap Barang</label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="box" class="w-4 h-4"></i></span>
+                                    <input 
+                                        type="text" 
+                                        id="nama_barang" 
+                                        name="nama_barang" 
+                                        required
+                                        class="ipos-input pl-10"
+                                        placeholder="Contoh: Pensil 2B"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <!-- Harga Beli -->
+                                <div class="space-y-2">
+                                    <label for="harga_beli" class="text-xs font-semibold text-slate-700">Harga Beli Dasar (Rp)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">Rp</span>
+                                        <input 
+                                            type="number" 
+                                            id="harga_beli" 
+                                            name="harga_beli" 
+                                            required
+                                            class="ipos-input pl-10"
+                                            placeholder="0"
+                                        >
                                     </div>
-                                    <input type="number" id="harga_beli" name="harga_beli" required
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900"
-                                        placeholder="0">
+                                </div>
+
+                                <!-- Harga Jual -->
+                                <div class="space-y-2">
+                                    <label for="harga_jual" class="text-xs font-semibold text-slate-700 font-bold text-brand-650">Harga Jual Kasir (Rp)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-650 text-xs font-bold">Rp</span>
+                                        <input 
+                                            type="number" 
+                                            id="harga_jual" 
+                                            name="harga_jual" 
+                                            required
+                                            class="ipos-input pl-10 font-bold text-brand-700 focus:border-brand-600 focus:ring-brand-200"
+                                            placeholder="0"
+                                        >
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Kategori (Sekarang menggunakan SELECT) -->
-                        <div class="space-y-2">
-                            <label for="id_kategori"
-                                class="text-sm font-semibold text-gray-700 uppercase tracking-tight">Kategori
-                                Produk</label>
-                            <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="tag"
-                                        class="w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors"></i>
-                                </div>
-                                <select id="id_kategori" name="id_kategori" required
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-gray-900 appearance-none bg-white">
-                                    <option value="" disabled selected>-- Pilih Kategori --</option>
-                                    <?php foreach ($list_kategori as $kat): ?>
-                                    <option value="<?= $kat['id_kategori'] ?>">
-                                        <?= htmlspecialchars($kat['nama_kategori']) ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div
-                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            <!-- Kategori (Sekarang menggunakan SELECT) -->
+                            <div class="space-y-2">
+                                <label for="id_kategori" class="text-xs font-semibold text-slate-700">Kategori Produk</label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="tag" class="w-4 h-4"></i></span>
+                                    <select 
+                                        id="id_kategori" 
+                                        name="id_kategori" 
+                                        required
+                                        class="ipos-input pl-10 appearance-none bg-white pr-10"
+                                    >
+                                        <option value="" disabled selected>-- Pilih Kategori --</option>
+                                        <?php foreach ($list_kategori as $kat): ?>
+                                        <option value="<?= $kat['id_kategori'] ?>">
+                                            <?= htmlspecialchars($kat['nama_kategori']) ?>
+                                        </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="pt-6 border-t border-gray-100 flex items-center gap-3">
-                            <button type="submit"
-                                class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-md shadow-emerald-100 hover:shadow-lg hover:-translate-y-0.5 gap-2">
-                                <i data-lucide="save" class="w-5 h-5"></i>
-                                Simpan Data Barang
-                            </button>
-                            <a href="index.php"
-                                class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-lg transition-all">
-                                Batal
-                            </a>
-                        </div>
-                    </form>
+                            <!-- Action Buttons -->
+                            <div class="pt-6 border-t border-slate-100 flex items-center gap-3">
+                                <button 
+                                    type="submit"
+                                    class="flex-1 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-all shadow-md shadow-brand-500/10 hover:shadow-lg flex items-center justify-center gap-2 text-xs"
+                                >
+                                    <i data-lucide="save" class="w-4.5 h-4.5"></i> Simpan Data Produk
+                                </button>
+                                <a 
+                                    href="index.php"
+                                    class="px-5 py-3 bg-slate-100 text-slate-650 font-bold rounded-xl hover:bg-slate-200 transition-colors text-xs text-center"
+                                >
+                                    Batal
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -224,23 +212,13 @@ try {
 
         if (hargaJual <= 0 || hargaBeli <= 0) {
             e.preventDefault();
-            showPopup();
+            popup.classList.remove('hidden');
+            popup.classList.add('flex');
         }
     });
 
-    function showPopup() {
-        popup.classList.remove('hidden');
-    }
-
-    function closePopup() {
-        popup.classList.add('hidden');
-    }
-
     lucide.createIcons();
     </script>
-        </div>
-    </div>
-
 </body>
 
 </html>

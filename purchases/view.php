@@ -30,62 +30,69 @@ try {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Detail Pembelian #<?= htmlspecialchars($purchase['id_pembelian']) ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body{font-family:Inter, sans-serif} .main-content{margin-left:16rem}</style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Detail Pembelian #<?= htmlspecialchars($purchase['id_pembelian']) ?> | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
-    <div class="main-content px-4 py-8">
+    <div class="main-content px-4 py-8 fade-in">
         <div class="max-w-4xl mx-auto">
+            <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold">Detail Pembelian</h1>
-                    <p class="text-sm text-gray-500">#<?= htmlspecialchars($purchase['id_pembelian']) ?> — <?= htmlspecialchars($purchase['tanggal']) ?></p>
+                    <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="package-2" class="w-5.5 h-5.5 text-brand-600"></i>
+                        Detail Nota Pembelian
+                    </h1>
+                    <p class="text-xs text-slate-500">Nota masuk produk dari supplier #<?= htmlspecialchars($purchase['id_pembelian']) ?>.</p>
                 </div>
-                <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200">Kembali</a>
+                <a href="index.php" class="px-4 py-2 border rounded-xl bg-white text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
+                    Kembali
+                </a>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <h3 class="font-semibold">Supplier</h3>
-                        <p class="text-sm"><?= htmlspecialchars($purchase['nama_supplier'] ?? '-') ?></p>
+            <!-- Details Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+                <div class="grid grid-cols-2 gap-6 text-xs">
+                    <div class="p-3.5 bg-slate-50 border border-slate-100/50 rounded-xl">
+                        <p class="text-slate-400 font-medium mb-1">Nama Supplier:</p>
+                        <p class="text-slate-800 font-extrabold text-sm"><?= htmlspecialchars($purchase['nama_supplier'] ?? '-') ?></p>
                     </div>
-                    <div>
-                        <h3 class="font-semibold">Dicatat oleh</h3>
-                        <p class="text-sm"><?= htmlspecialchars($purchase['nama_user'] ?? '-') ?></p>
+                    <div class="p-3.5 bg-slate-50 border border-slate-100/50 rounded-xl">
+                        <p class="text-slate-400 font-medium mb-1">Dicatat Oleh (Admin):</p>
+                        <p class="text-slate-800 font-extrabold text-sm uppercase"><?= htmlspecialchars($purchase['nama_user'] ?? '-') ?></p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50 border-b border-gray-100">
+            <!-- Table Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-3 text-xs text-gray-500">Produk</th>
-                            <th class="px-6 py-3 text-xs text-gray-500">Qty</th>
-                            <th class="px-6 py-3 text-xs text-gray-500">Harga Beli</th>
-                            <th class="px-6 py-3 text-xs text-gray-500 text-right">Subtotal</th>
+                            <th class="px-6 py-4">Nama Produk</th>
+                            <th class="px-6 py-4 text-center">Kuantitas</th>
+                            <th class="px-6 py-4 text-right">Harga Beli Satuan</th>
+                            <th class="px-6 py-4 text-right">Subtotal</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-100">
                         <?php foreach ($items as $it): ?>
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-3"><?= htmlspecialchars($it['nama_barang'] ?? $it['id_barang']) ?></td>
-                            <td class="px-6 py-3"><?= (int) $it['qty'] ?></td>
-                            <td class="px-6 py-3">Rp <?= number_format($it['harga_beli'],0,',','.') ?></td>
-                            <td class="px-6 py-3 text-right font-semibold">Rp <?= number_format($it['subtotal'],0,',','.') ?></td>
+                        <tr class="hover:bg-slate-50/30 transition-colors">
+                            <td class="px-6 py-4 font-bold text-slate-800">
+                                <?= htmlspecialchars($it['nama_barang'] ?? $it['id_barang']) ?>
+                                <p class="text-[9px] text-slate-400 font-mono mt-0.5">#<?= htmlspecialchars($it['id_barang']) ?></p>
+                            </td>
+                            <td class="px-6 py-4 text-center font-bold text-slate-700"><?= (int) $it['qty'] ?> unit</td>
+                            <td class="px-6 py-4 text-right text-slate-650">Rp <?= number_format($it['harga_beli'],0,',','.') ?></td>
+                            <td class="px-6 py-4 text-right font-extrabold text-slate-900 text-sm">Rp <?= number_format($it['subtotal'],0,',','.') ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <div class="p-6 text-right border-t border-gray-100">
-                    <span class="text-sm text-gray-500 mr-4">Total</span>
-                    <span class="text-lg font-bold">Rp <?= number_format($purchase['total'],0,',','.') ?></span>
+                <div class="p-6 text-right border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-10">
+                    <span class="text-xs text-slate-500 font-medium">Total Anggaran Pembelian:</span>
+                    <span class="text-lg font-extrabold text-slate-900">Rp <?= number_format($purchase['total'],0,',','.') ?></span>
                 </div>
             </div>
         </div>

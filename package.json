@@ -1,0 +1,24 @@
+{
+  "name": "proyekmbd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MitanNoel/proyekmbd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MitanNoel/proyekmbd/issues"
+  },
+  "homepage": "https://github.com/MitanNoel/proyekmbd#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.3.0"
+  }
+}

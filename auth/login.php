@@ -20,43 +20,39 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Sistem Manajemen Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Login | IPOS Sistem Toko</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
         .login-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%);
         }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md fade-in">
         <!-- Login Card -->
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
             <!-- Header -->
-            <div class="login-gradient p-8 text-white text-center">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="store" class="w-8 h-8"></i>
+            <div class="login-gradient p-8 text-white text-center relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+                
+                <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm shadow-inner">
+                    <i data-lucide="store" class="w-8 h-8 text-white"></i>
                 </div>
-                <h1 class="text-3xl font-bold">Sistem Toko</h1>
-                <p class="text-purple-100 mt-2">Manajemen Inventaris & Penjualan</p>
+                <h1 class="text-2xl font-bold tracking-tight">Sistem IPOS Toko</h1>
+                <p class="text-sky-100/80 text-xs mt-1">Manajemen Inventaris & Penjualan</p>
             </div>
 
             <!-- Login Form -->
             <div class="p-8">
                 <?php if ($error_display): ?>
-                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0"></i>
+                <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-650 mt-0.5 flex-shrink-0"></i>
                     <div>
-                        <h3 class="font-semibold text-red-900">Login Gagal</h3>
-                        <p class="text-red-700 text-sm mt-1"><?= htmlspecialchars($error_display) ?></p>
+                        <h3 class="font-semibold text-red-950 text-sm">Login Gagal</h3>
+                        <p class="text-red-700 text-xs mt-0.5"><?= htmlspecialchars($error_display) ?></p>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -64,30 +60,30 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
                 <form method="POST" action="process_login.php" class="space-y-5">
                     <!-- Username Field -->
                     <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i data-lucide="user" class="inline w-4 h-4 mr-1"></i>Username
+                        <label for="username" class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                            <i data-lucide="user" class="inline w-3.5 h-3.5 mr-1 text-slate-400"></i>Username
                         </label>
                         <input 
                             type="text" 
                             id="username" 
                             name="username" 
                             placeholder="Masukkan username Anda"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+                            class="ipos-input"
                             required
                         >
                     </div>
 
                     <!-- Password Field -->
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i data-lucide="lock" class="inline w-4 h-4 mr-1"></i>Password
+                        <label for="password" class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">
+                            <i data-lucide="lock" class="inline w-3.5 h-3.5 mr-1 text-slate-400"></i>Password
                         </label>
                         <input 
                             type="password" 
                             id="password" 
                             name="password" 
                             placeholder="Masukkan password Anda"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+                            class="ipos-input"
                             required
                         >
                     </div>
@@ -95,25 +91,33 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
                     <!-- Login Button -->
                     <button 
                         type="submit"
-                        class="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl mt-6 flex items-center justify-center gap-2"
+                        class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/10 hover:shadow-lg hover:shadow-brand-500/20 active:scale-[0.99] mt-6 flex items-center justify-center gap-2"
                     >
-                        <i data-lucide="log-in" class="w-5 h-5"></i>Login
+                        <i data-lucide="log-in" class="w-5 h-5"></i>Masuk ke Sistem
                     </button>
                 </form>
 
                 <!-- Demo Credentials Info -->
-                <div class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-xs text-blue-600 font-semibold mb-2">Demo Credentials:</p>
-                    <div class="text-xs text-blue-700 space-y-1">
-                        <p><strong>Admin:</strong> username: <code class="bg-white px-2 py-1 rounded">admin</code> | password: <code class="bg-white px-2 py-1 rounded">12345</code></p>
-                        <p><strong>Kasir:</strong> username: <code class="bg-white px-2 py-1 rounded">kasir</code> | password: <code class="bg-white px-2 py-1 rounded">12345</code></p>
+                <div class="mt-8 p-4 bg-slate-50 border border-slate-100 rounded-xl">
+                    <p class="text-xs text-brand-700 font-semibold mb-2 flex items-center gap-1.5">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i> Kredensial Demo:
+                    </p>
+                    <div class="text-[11px] text-slate-650 space-y-2">
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-100">
+                            <span><strong>Admin:</strong> <code class="text-brand-600">admin</code></span>
+                            <span class="text-slate-400">pass: <code class="text-slate-700 font-medium">12345</code></span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-100">
+                            <span><strong>Kasir:</strong> <code class="text-brand-600">kasir</code></span>
+                            <span class="text-slate-400">pass: <code class="text-slate-700 font-medium">12345</code></span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="px-8 py-4 bg-gray-50 border-t border-gray-200 text-center text-xs text-gray-500">
-                <p>© 2026 Sistem Toko. All rights reserved.</p>
+            <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-400">
+                <p>&copy; 2026 IPOS Sistem Toko. All rights reserved.</p>
             </div>
         </div>
     </div>

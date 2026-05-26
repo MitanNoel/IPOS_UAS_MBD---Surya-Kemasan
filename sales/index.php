@@ -8,7 +8,14 @@ if (!is_admin() && !is_kasir()) {
 require_once '../config/database.php';
 
 try {
-    $stmt = $pdo->query("SELECT p.*, u.nama_user, COUNT(dp.iddetail_penjualan) as items_count FROM penjualan p LEFT JOIN user u ON p.id_user = u.id_user LEFT JOIN detail_penjualan dp ON p.id_penjualan = dp.id_penjualan GROUP BY p.id_penjualan ORDER BY p.tanggal DESC, p.id_penjualan DESC");
+    $stmt = $pdo->query("
+        SELECT p.*, u.nama_user, COUNT(dp.iddetail_penjualan) as items_count 
+        FROM penjualan p 
+        LEFT JOIN user u ON p.id_user = u.id_user 
+        LEFT JOIN detail_penjualan dp ON p.id_penjualan = dp.id_penjualan 
+        GROUP BY p.id_penjualan 
+        ORDER BY p.tanggal DESC, p.id_penjualan DESC
+    ");
     $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die('Error database: ' . $e->getMessage());
@@ -26,60 +33,79 @@ $message = $statusMessages[$status] ?? '';
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Daftar Penjualan | Sistem Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body{font-family:Inter, sans-serif} .main-content{margin-left:16rem}</style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Riwayat Penjualan | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
-    <div class="main-content px-4 py-8">
+    
+    <div class="main-content px-4 py-8 fade-in">
         <div class="max-w-7xl mx-auto">
-            <div class="flex items-center justify-between mb-6">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold">Daftar Penjualan</h1>
-                    <p class="text-sm text-gray-500">Riwayat penjualan transaksi POS.</p>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <i data-lucide="receipt" class="w-6 h-6 text-brand-600"></i>
+                        Riwayat Penjualan
+                    </h1>
+                    <p class="text-xs text-slate-500">Daftar transaksi penjualan kasir (POS).</p>
                 </div>
-                <div class="flex gap-2">
-                    <a href="pos.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"><i data-lucide="shopping-cart" class="w-4 h-4"></i> POS</a>
-                </div>
+                <a href="pos.php" class="ipos-btn-primary text-xs">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i> Buka Aplikasi POS
+                </a>
             </div>
 
-            <?php if ($message): ?><div class="mb-4 p-3 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded"><?= htmlspecialchars($message) ?></div><?php endif; ?>
+            <!-- Status Alert -->
+            <?php if ($message): ?>
+            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-800 text-xs flex items-center gap-2 font-medium">
+                <i data-lucide="check-circle" class="w-4.5 h-4.5 text-emerald-600"></i>
+                <?= htmlspecialchars($message) ?>
+            </div>
+            <?php endif; ?>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Table Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 border-b border-gray-100">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">ID</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Tanggal</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Items</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Total</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Kasir</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 text-right">Aksi</th>
+                                <th class="px-6 py-4">ID Transaksi</th>
+                                <th class="px-6 py-4">Tanggal</th>
+                                <th class="px-6 py-4">Jumlah Barang</th>
+                                <th class="px-6 py-4">Total Penjualan</th>
+                                <th class="px-6 py-4">Kasir</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-slate-150">
                             <?php if (empty($sales)): ?>
-                                <tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">Belum ada transaksi penjualan.</td></tr>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-16 text-center text-slate-400">
+                                        <i data-lucide="receipt-text" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+                                        Belum ada transaksi penjualan yang tercatat.
+                                    </td>
+                                </tr>
                             <?php else: foreach ($sales as $s): ?>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-3 font-mono text-sm">#<?= htmlspecialchars($s['id_penjualan']) ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= htmlspecialchars($s['tanggal']) ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= (int)$s['items_count'] ?> item</td>
-                                    <td class="px-6 py-3 text-sm font-semibold">Rp <?= number_format($s['total'] ?? 0,0,',','.') ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= htmlspecialchars($s['nama_user'] ?? '-') ?></td>
-                                    <td class="px-6 py-3 text-right text-sm">
-                                        <div class="flex justify-end gap-2">
-                                            <a href="view.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50"><i data-lucide="eye" class="w-4 h-4"></i></a>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-bold text-brand-600">#<?= htmlspecialchars($s['id_penjualan']) ?></td>
+                                    <td class="px-6 py-4 text-slate-650 font-medium"><?= date('d M Y, H:i', strtotime($s['tanggal'])) ?></td>
+                                    <td class="px-6 py-4 text-slate-600 font-semibold"><?= (int)$s['items_count'] ?> item</td>
+                                    <td class="px-6 py-4 text-slate-900 font-extrabold text-sm">Rp <?= number_format($s['total'] ?? 0, 0, ',', '.') ?></td>
+                                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 bg-slate-100 rounded-md text-slate-700 font-bold"><?= htmlspecialchars($s['nama_user'] ?? '-') ?></span></td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex justify-end gap-1">
+                                            <a href="view.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors" title="Lihat Struk">
+                                                <i data-lucide="eye" class="w-4.5 h-4.5"></i>
+                                            </a>
                                             <?php if (is_admin()): ?>
-                                            <a href="edit.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50"><i data-lucide="pencil" class="w-4 h-4"></i></a>
-                                            <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus transaksi ini?');">
+                                            <a href="edit.php?id=<?= urlencode($s['id_penjualan']) ?>" class="p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors" title="Edit Transaksi">
+                                                <i data-lucide="pencil" class="w-4.5 h-4.5"></i>
+                                            </a>
+                                            <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus transaksi ini? Stok produk akan kembali disesuaikan.');" class="inline">
                                                 <input type="hidden" name="id_penjualan" value="<?= htmlspecialchars($s['id_penjualan']) ?>">
-                                                <button type="submit" class="p-2 rounded-lg text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                <button type="submit" class="p-2 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors" title="Hapus Transaksi">
+                                                    <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                                                </button>
                                             </form>
                                             <?php endif; ?>
                                         </div>

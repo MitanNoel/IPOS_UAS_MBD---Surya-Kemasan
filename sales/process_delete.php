@@ -1,10 +1,6 @@
 <?php
 require_once '../auth/check_auth.php';
-// Allow admin and kasir
-if (!is_admin() && !is_kasir()) {
-    header('Location: ../dashboard/index.php?error=access_denied');
-    exit();
-}
+require_admin();
 require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

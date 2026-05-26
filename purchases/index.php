@@ -22,59 +22,78 @@ $message = $statusMessages[$status] ?? '';
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Daftar Pembelian | Sistem Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body{font-family:Inter, sans-serif} .main-content{margin-left:16rem}</style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Pembelian Stok | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     <?php require_once '../includes/navbar.php'; ?>
-    <div class="main-content px-4 py-8">
+    
+    <div class="main-content px-4 py-8 fade-in">
         <div class="max-w-7xl mx-auto">
-            <div class="flex items-center justify-between mb-6">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold">Daftar Pembelian</h1>
-                    <p class="text-sm text-gray-500">Riwayat pembelian barang dari supplier.</p>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+                        <span class="w-2.5 h-7 bg-brand-600 rounded-full inline-block"></span>
+                        Pembelian (Restok Barang)
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">Riwayat pengadaan stok barang dari pihak supplier.</p>
                 </div>
-                <a href="tambah.php" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Pembelian
+                <a href="tambah.php" class="ipos-btn-primary text-xs">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Catat Pembelian Baru
                 </a>
             </div>
 
-            <?php if ($message): ?><div class="mb-4 p-3 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded"><?= htmlspecialchars($message) ?></div><?php endif; ?>
+            <!-- Status Alert -->
+            <?php if ($message): ?>
+            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-800 text-xs flex items-center gap-2 font-medium">
+                <i data-lucide="check-circle" class="w-4.5 h-4.5 text-emerald-600"></i>
+                <?= htmlspecialchars($message) ?>
+            </div>
+            <?php endif; ?>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Table Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 border-b border-gray-100">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">ID</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Tanggal</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Supplier</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Total</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500">Oleh</th>
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 text-right">Aksi</th>
+                                <th class="px-6 py-4">ID Pembelian</th>
+                                <th class="px-6 py-4">Tanggal</th>
+                                <th class="px-6 py-4">Supplier</th>
+                                <th class="px-6 py-4">Total Biaya Belanja</th>
+                                <th class="px-6 py-4">Dicatat Oleh</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-slate-100">
                             <?php if (empty($purchases)): ?>
-                                <tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">Belum ada data pembelian.</td></tr>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-16 text-center text-slate-400">
+                                        <i data-lucide="receipt-text" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+                                        Belum ada riwayat transaksi pembelian.
+                                    </td>
+                                </tr>
                             <?php else: foreach ($purchases as $p): ?>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-3 font-mono text-sm">#<?= htmlspecialchars($p['id_pembelian']) ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= htmlspecialchars($p['tanggal']) ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= htmlspecialchars($p['nama_supplier'] ?? 'Tidak Diketahui') ?></td>
-                                    <td class="px-6 py-3 text-sm font-semibold">Rp <?= number_format($p['total'] ?? 0, 0, ',', '.') ?></td>
-                                    <td class="px-6 py-3 text-sm"><?= htmlspecialchars($p['nama_user'] ?? 'System') ?></td>
-                                    <td class="px-6 py-3 text-right text-sm">
-                                        <div class="flex justify-end gap-2">
-                                            <a href="view.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50"><i data-lucide="eye" class="w-4 h-4"></i></a>
-                                            <a href="edit.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-amber-600 hover:bg-amber-50"><i data-lucide="pencil" class="w-4 h-4"></i></a>
-                                            <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus pembelian ini?');">
+                                <tr class="hover:bg-slate-50/30 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-bold text-brand-600">#<?= htmlspecialchars($p['id_pembelian']) ?></td>
+                                    <td class="px-6 py-4 text-slate-650 font-medium"><?= date('d M Y', strtotime($p['tanggal'])) ?></td>
+                                    <td class="px-6 py-4 font-bold text-slate-800"><?= htmlspecialchars($p['nama_supplier'] ?? 'Tidak Diketahui') ?></td>
+                                    <td class="px-6 py-4 text-slate-900 font-extrabold text-sm">Rp <?= number_format($p['total'] ?? 0, 0, ',', '.') ?></td>
+                                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 bg-slate-100 rounded-md text-slate-700 font-bold"><?= htmlspecialchars($p['nama_user'] ?? 'System') ?></span></td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex justify-end gap-1">
+                                            <a href="view.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors" title="Lihat Detail">
+                                                <i data-lucide="eye" class="w-4.5 h-4.5"></i>
+                                            </a>
+                                            <a href="edit.php?id=<?= urlencode($p['id_pembelian']) ?>" class="p-2 rounded-lg text-brand-600 hover:bg-brand-50 transition-colors" title="Edit Transaksi">
+                                                <i data-lucide="pencil" class="w-4.5 h-4.5"></i>
+                                            </a>
+                                            <form action="process_delete.php" method="POST" onsubmit="return confirm('Hapus pembelian ini? Stok produk akan kembali disesuaikan.');" class="inline">
                                                 <input type="hidden" name="id_pembelian" value="<?= htmlspecialchars($p['id_pembelian']) ?>">
-                                                <button type="submit" class="p-2 rounded-lg text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                <button type="submit" class="p-2 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors" title="Hapus Transaksi">
+                                                    <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                                                </button>
                                             </form>
                                         </div>
                                     </td>

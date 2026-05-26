@@ -26,52 +26,69 @@ try {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hapus User | Sistem Toko</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <?php require_once '../includes/header.php'; ?>
+    <title>Hapus User | IPOS Sistem Toko</title>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl border border-red-100 overflow-hidden">
-        <div class="bg-red-50 px-8 py-10 text-center">
-            <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i data-lucide="user-x" class="w-10 h-10"></i>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full fade-in">
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-red-100 overflow-hidden">
+            <!-- Header warning section -->
+            <div class="bg-red-50/70 border-b border-red-100/50 px-6 py-8 text-center">
+                <div class="w-16 h-16 bg-red-100 text-red-650 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-200 shadow-inner">
+                    <i data-lucide="user-x" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 leading-tight">Hapus Staf Pengguna?</h2>
+                <p class="text-red-700 font-semibold text-[9px] uppercase tracking-wider mt-1.5">Tindakan ini tidak bisa dibatalkan</p>
             </div>
-            <h2 class="text-2xl font-extrabold text-gray-900">Hapus User?</h2>
-            <p class="text-red-600/70 text-sm mt-2 uppercase tracking-widest text-[10px]">Tindakan ini permanen</p>
+
+            <!-- Details -->
+            <div class="px-6 py-5 border-b border-slate-100">
+                <div class="bg-slate-50 rounded-xl p-4 space-y-3.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Nama Lengkap</span>
+                        <span class="font-bold text-slate-800"><?= htmlspecialchars($user['nama_user']) ?></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Username Login</span>
+                        <span class="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 text-[10px] font-bold text-slate-650">
+                            <?= htmlspecialchars($user['username']) ?>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 font-medium">Hak Akses Role</span>
+                        <span class="px-2.5 py-0.5 border rounded-lg text-[10px] font-bold uppercase <?= $user['role'] === 'admin' ? 'bg-brand-50 text-brand-700 border-brand-100/50' : 'bg-slate-50 text-slate-650 border-slate-200' ?>">
+                            <?= htmlspecialchars($user['role']) ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="p-6 space-y-2">
+                <form action="process_delete.php" method="POST">
+                    <input type="hidden" name="id_user" value="<?= htmlspecialchars($user['id_user']) ?>">
+                    <button 
+                        type="submit"
+                        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-md shadow-red-500/10 hover:shadow-lg flex items-center justify-center gap-1.5 text-xs"
+                    >
+                        <i data-lucide="check" class="w-4 h-4"></i> Hapus Pengguna
+                    </button>
+                </form>
+                <a 
+                    href="index.php" 
+                    class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 font-bold rounded-xl transition-colors flex items-center justify-center border border-slate-200 text-xs"
+                >
+                    Batalkan
+                </a>
+            </div>
         </div>
-        <div class="px-8 py-6 border-y border-gray-50 space-y-4">
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Nama</span>
-                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['nama_user']) ?></span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Username</span>
-                <span class="font-mono bg-gray-50 px-2 py-1 rounded border border-gray-200 text-xs text-gray-700"><?= htmlspecialchars($user['username']) ?></span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400 font-medium text-xs uppercase tracking-tighter">Role</span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold <?= $user['role'] === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' ?>">
-                    <?= htmlspecialchars($user['role']) ?>
-                </span>
-            </div>
-        </div>
-        <div class="px-8 py-6 flex items-center gap-3">
-            <form action="process_delete.php" method="POST" class="flex-1">
-                <input type="hidden" name="id_user" value="<?= htmlspecialchars($user['id_user']) ?>">
-                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    Ya, Hapus
-                </button>
-            </form>
-            <a href="index.php" class="px-5 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">Batal</a>
-        </div>
+        
+        <p class="text-center text-slate-400 text-[9px] mt-6 font-bold uppercase tracking-widest">
+            IPOS Sistem Toko &bull; Master Data
+        </p>
     </div>
+    
     <script>lucide.createIcons();</script>
 </body>
 </html>
