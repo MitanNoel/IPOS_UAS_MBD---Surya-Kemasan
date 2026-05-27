@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS `barang`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `barang` (
-  `kode_barang` int NOT NULL AUTO_INCREMENT,
-  `id_barang` varchar(20) NOT NULL,
-  `nama_barang` varchar(100) DEFAULT NULL,
-  `harga_jual` decimal(10,2) DEFAULT NULL,
-  `harga_beli` decimal(10,2) DEFAULT NULL,
+  `kode_barang` varchar(45) NOT NULL,
+  `id_barang` int NOT NULL AUTO_INCREMENT,
+  `nama_barang` varchar(45) DEFAULT NULL,
+  `harga_jual` decimal(12,2) DEFAULT NULL,
+  `harga_beli` decimal(12,2) DEFAULT NULL,
   `id_kategori` int DEFAULT NULL,
   PRIMARY KEY (`id_barang`),
   UNIQUE KEY `kode_barang` (`kode_barang`),
@@ -42,7 +42,7 @@ CREATE TABLE `barang` (
 
 LOCK TABLES `barang` WRITE;
 /*!40000 ALTER TABLE `barang` DISABLE KEYS */;
-INSERT INTO `barang` VALUES (1,'B001','Cup Plastik 12 oz',5000.00,3000.00,2),(2,'B002','Tutup Cup',2000.00,1000.00,2),(3,'B003','Box Makanan',12000.00,8000.00,3),(4,'B004','Sedotan Bening',16000.00,13000.00,4),(5,'B005','Sedotan Berwarna',18000.00,14000.00,4),(6,'B006','Sendok Makan Putih',14000.00,11500.00,5),(7,'B007','Sendok Makan Hitam',13500.00,11000.00,5),(8,'B008','Sendok Teh',11000.00,9000.00,5),(9,'B009','Garpu Bening',13000.00,11000.00,6),(10,'B010','Garpu Hitam',12500.00,10000.00,6),(11,'B011','Piring Kue',6000.00,2500.00,7),(12,'B012','Toples Kecil',9500.00,7500.00,8),(13,'B013','Toples Sedang',11500.00,8500.00,8),(14,'B014','Toples Besar',13500.00,10000.00,8),(15,'B015','Cup Saus',8000.00,6000.00,2);
+INSERT INTO `barang` VALUES ('B001',1,'Cup Plastik 12 oz',5000.00,3000.00,2),('B002',2,'Tutup Cup',2000.00,1000.00,2),('B003',3,'Box Makanan',12000.00,8000.00,3),('B004',4,'Sedotan Bening',16000.00,13000.00,4),('B005',5,'Sedotan Berwarna',18000.00,14000.00,4),('B006',6,'Sendok Makan Putih',14000.00,11500.00,5),('B007',7,'Sendok Makan Hitam',13500.00,11000.00,5),('B008',8,'Sendok Teh',11000.00,9000.00,5),('B009',9,'Garpu Bening',13000.00,11000.00,6),('B010',10,'Garpu Hitam',12500.00,10000.00,6),('B011',11,'Piring Kue',6000.00,2500.00,7),('B012',12,'Toples Kecil',9500.00,7500.00,8),('B013',13,'Toples Sedang',11500.00,8500.00,8),('B014',14,'Toples Besar',13500.00,10000.00,8),('B015',15,'Cup Saus',8000.00,6000.00,2);
 /*!40000 ALTER TABLE `barang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,11 +55,11 @@ DROP TABLE IF EXISTS `detail_pembelian`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `detail_pembelian` (
   `iddetail_pembelian` int NOT NULL AUTO_INCREMENT,
-  `id_barang` varchar(20) DEFAULT NULL,
+  `id_barang` int DEFAULT NULL,
   `id_pembelian` int DEFAULT NULL,
   `qty` int DEFAULT NULL,
-  `harga_beli` decimal(10,2) DEFAULT NULL,
-  `subtotal` decimal(10,2) DEFAULT NULL,
+  `harga_beli` decimal(12,2) DEFAULT NULL,
+  `subtotal` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`iddetail_pembelian`),
   KEY `id_barang` (`id_barang`),
   KEY `id_pembelian` (`id_pembelian`),
@@ -74,7 +74,7 @@ CREATE TABLE `detail_pembelian` (
 
 LOCK TABLES `detail_pembelian` WRITE;
 /*!40000 ALTER TABLE `detail_pembelian` DISABLE KEYS */;
-INSERT INTO `detail_pembelian` VALUES (1,'B001',1,10,3000.00,30000.00),(2,'B002',1,20,1000.00,20000.00),(3,'B003',2,10,8000.00,80000.00),(4,'B011',2,20,2500.00,50000.00),(5,'B006',3,10,11500.00,115000.00),(6,'B007',3,10,11000.00,110000.00),(7,'B002',3,20,1000.00,20000.00),(8,'B015',4,10,6000.00,60000.00),(9,'B013',5,40,8500.00,340000.00),(10,'B014',5,10,10000.00,100000.00),(11,'B011',5,2,2500.00,5000.00),(12,'B004',6,20,13000.00,260000.00),(13,'B005',6,10,14000.00,140000.00),(14,'B008',6,10,9000.00,90000.00),(15,'B012',7,40,7500.00,300000.00),(16,'B015',7,10,6000.00,60000.00);
+INSERT INTO `detail_pembelian` VALUES (1,1,1,10,3000.00,30000.00),(2,2,1,20,1000.00,20000.00),(3,3,2,10,8000.00,80000.00),(4,11,2,20,2500.00,50000.00),(5,6,3,10,11500.00,115000.00),(6,7,3,10,11000.00,110000.00),(7,2,3,20,1000.00,20000.00),(8,15,4,10,6000.00,60000.00),(9,13,5,40,8500.00,340000.00),(10,14,5,10,10000.00,100000.00),(11,11,5,2,2500.00,5000.00),(12,4,6,20,13000.00,260000.00),(13,5,6,10,14000.00,140000.00),(14,8,6,10,9000.00,90000.00),(15,12,7,40,7500.00,300000.00),(16,15,7,10,6000.00,60000.00);
 /*!40000 ALTER TABLE `detail_pembelian` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,11 +87,11 @@ DROP TABLE IF EXISTS `detail_penjualan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `detail_penjualan` (
   `iddetail_penjualan` int NOT NULL AUTO_INCREMENT,
-  `id_barang` varchar(20) DEFAULT NULL,
+  `id_barang` int DEFAULT NULL,
   `id_penjualan` int DEFAULT NULL,
   `qty` int DEFAULT NULL,
-  `harga_jual` decimal(10,2) DEFAULT NULL,
-  `subtotal` decimal(10,2) DEFAULT NULL,
+  `harga_jual` decimal(12,2) DEFAULT NULL,
+  `subtotal` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`iddetail_penjualan`),
   KEY `id_barang` (`id_barang`),
   KEY `id_penjualan` (`id_penjualan`),
@@ -106,7 +106,7 @@ CREATE TABLE `detail_penjualan` (
 
 LOCK TABLES `detail_penjualan` WRITE;
 /*!40000 ALTER TABLE `detail_penjualan` DISABLE KEYS */;
-INSERT INTO `detail_penjualan` VALUES (1,'B001',1,4,5000.00,20000.00),(2,'B002',1,7,2000.00,14000.00),(3,'B001',2,1,5000.00,5000.00),(4,'B006',3,1,14000.00,14000.00),(5,'B004',4,1,16000.00,16000.00),(6,'B015',5,2,8000.00,16000.00),(7,'B005',6,2,18000.00,36000.00),(8,'B014',7,3,13500.00,40500.00),(9,'B012',8,5,9500.00,47500.00),(10,'B003',9,5,12000.00,60000.00),(11,'B011',10,10,6000.00,60000.00),(12,'B003',11,2,12000.00,24000.00),(13,'B006',11,2,14000.00,28000.00),(14,'B009',11,2,13000.00,26000.00),(15,'B015',12,10,8000.00,80000.00),(16,'B005',13,5,18000.00,90000.00),(17,'B013',14,10,11500.00,115000.00),(18,'B011',15,20,6000.00,120000.00),(19,'B008',16,12,11000.00,132000.00),(20,'B014',17,10,13500.00,135000.00),(21,'B006',18,10,14000.00,140000.00),(22,'B009',19,20,13000.00,260000.00),(23,'B007',20,20,13500.00,270000.00),(24,'B001',21,100,5000.00,500000.00),(500,'B001',100,1,5000.00,5000.00),(501,'B004',100,1,16000.00,16000.00);
+INSERT INTO `detail_penjualan` VALUES (1,1,1,4,5000.00,20000.00),(2,2,1,7,2000.00,14000.00),(3,1,2,1,5000.00,5000.00),(4,6,3,1,14000.00,14000.00),(5,4,4,1,16000.00,16000.00),(6,15,5,2,8000.00,16000.00),(7,5,6,2,18000.00,36000.00),(8,14,7,3,13500.00,40500.00),(9,12,8,5,9500.00,47500.00),(10,3,9,5,12000.00,60000.00),(11,11,10,10,6000.00,60000.00),(12,3,11,2,12000.00,24000.00),(13,6,11,2,14000.00,28000.00),(14,9,11,2,13000.00,26000.00),(15,15,12,10,8000.00,80000.00),(16,5,13,5,18000.00,90000.00),(17,13,14,10,11500.00,115000.00),(18,11,15,20,6000.00,120000.00),(19,8,16,12,11000.00,132000.00),(20,14,17,10,13500.00,135000.00),(21,6,18,10,14000.00,140000.00),(22,9,19,20,13000.00,260000.00),(23,7,20,20,13500.00,270000.00),(24,1,21,100,5000.00,500000.00),(500,1,100,1,5000.00,5000.00),(501,4,100,1,16000.00,16000.00);
 /*!40000 ALTER TABLE `detail_penjualan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ DROP TABLE IF EXISTS `kategori`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `kategori` (
   `id_kategori` int NOT NULL AUTO_INCREMENT,
-  `nama_kategori` varchar(100) DEFAULT NULL,
+  `nama_kategori` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_kategori`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -146,7 +146,7 @@ CREATE TABLE `pembelian` (
   `id_user` int DEFAULT NULL,
   `id_supplier` int DEFAULT NULL,
   `tanggal` date DEFAULT NULL,
-  `total` decimal(10,2) DEFAULT NULL,
+  `total` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`id_pembelian`),
   KEY `id_user` (`id_user`),
   KEY `id_supplier` (`id_supplier`),
@@ -176,7 +176,7 @@ CREATE TABLE `penjualan` (
   `id_penjualan` int NOT NULL AUTO_INCREMENT,
   `id_user` int DEFAULT NULL,
   `tanggal` date DEFAULT NULL,
-  `total` decimal(10,2) DEFAULT NULL,
+  `total` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`id_penjualan`),
   KEY `id_user` (`id_user`),
   CONSTRAINT `penjualan_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`)
@@ -202,7 +202,7 @@ DROP TABLE IF EXISTS `supplier`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `supplier` (
   `id_supplier` int NOT NULL AUTO_INCREMENT,
-  `nama_supplier` varchar(100) DEFAULT NULL,
+  `nama_supplier` varchar(45) DEFAULT NULL,
   `no_telp` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`id_supplier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -227,10 +227,10 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `id_user` int NOT NULL AUTO_INCREMENT,
-  `nama_user` varchar(100) DEFAULT NULL,
-  `username` varchar(50) DEFAULT NULL,
-  `password` varchar(100) DEFAULT NULL,
-  `role` varchar(20) DEFAULT NULL,
+  `nama_user` varchar(45) DEFAULT NULL,
+  `username` varchar(45) DEFAULT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `role` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_user`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
