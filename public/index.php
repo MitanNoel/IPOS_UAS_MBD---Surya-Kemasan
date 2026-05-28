@@ -104,7 +104,7 @@ try {
                             <?php foreach ($barang as $row): ?>
                             <tr class="hover:bg-slate-50/30 transition-colors">
                                 <td class="px-6 py-4 font-mono font-bold text-slate-500">
-                                    #<?= htmlspecialchars($row['id_barang']) ?>
+                                    #<?= htmlspecialchars($row['kode_barang']) ?>
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-900">
                                     <?= htmlspecialchars($row['nama_barang']) ?>

@@ -41,6 +41,21 @@ try {
             </div>
         </div>
 
+        <!-- Error Popup (SKU Duplikat) -->
+        <div id="skuPopup" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/40 backdrop-blur-sm">
+            <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 border border-slate-100 text-center fade-in">
+                <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-100">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-950 mb-2">Kode SKU Sudah Ada</h3>
+                <p class="text-slate-500 text-xs mb-6">Kode SKU yang Anda masukkan sudah terdaftar di database. Silakan gunakan Kode SKU lain.</p>
+                <button onclick="closeSkuPopup()"
+                    class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl transition-all shadow-md shadow-amber-500/10">
+                    Input Ulang SKU
+                </button>
+            </div>
+        </div>
+
         <div class="max-w-4xl mx-auto">
             <!-- Header Section -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 border-b border-slate-200 pb-6">
@@ -65,7 +80,7 @@ try {
                             Panduan Input
                         </div>
                         <p class="text-xs text-brand-700 leading-relaxed">
-                            Pastikan <strong>ID Barang / SKU</strong> diisi dengan format unik dan belum terdaftar. Tentukan kategori produk dengan tepat demi ketertiban laporan inventory.
+                            Pastikan <strong>Kode SKU</strong> diisi dengan format unik dan belum terdaftar. Tentukan kategori produk dengan tepat demi ketertiban laporan inventory.
                         </p>
                     </div>
 
@@ -92,7 +107,7 @@ try {
                         <form id="insertForm" action="../process/insert.php" method="POST" class="p-6 space-y-5">
                             <!-- ID Barang -->
                             <div class="space-y-2">
-                                <label for="id_barang" class="text-xs font-semibold text-slate-700">Kode SKU / ID Barang</label>
+                                <label for="id_barang" class="text-xs font-semibold text-slate-700">Kode SKU</label>
                                 <div class="relative">
                                     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="fingerprint" class="w-4 h-4"></i></span>
                                     <input 
@@ -203,21 +218,47 @@ try {
     </div>
 
     <script>
-    const form = document.getElementById('insertForm');
-    const popup = document.getElementById('errorPopup');
+     const form = document.getElementById('insertForm');
+     const popup = document.getElementById('errorPopup');
+     const skuPopup = document.getElementById('skuPopup');
+     const idBarangInput = document.getElementById('id_barang');
+ 
+     form.addEventListener('submit', function(e) {
+         const hargaJual = parseFloat(document.getElementById('harga_jual').value);
+         const hargaBeli = parseFloat(document.getElementById('harga_beli').value);
+ 
+         if (hargaJual <= 0 || hargaBeli <= 0) {
+             e.preventDefault();
+             popup.classList.remove('hidden');
+             popup.classList.add('flex');
+         }
+     });
 
-    form.addEventListener('submit', function(e) {
-        const hargaJual = parseFloat(document.getElementById('harga_jual').value);
-        const hargaBeli = parseFloat(document.getElementById('harga_beli').value);
+     // Cek SKU duplikat saat input kehilangan fokus (blur)
+     idBarangInput.addEventListener('blur', function() {
+         const sku = idBarangInput.value.trim();
+         if (sku === '') return;
 
-        if (hargaJual <= 0 || hargaBeli <= 0) {
-            e.preventDefault();
-            popup.classList.remove('hidden');
-            popup.classList.add('flex');
-        }
-    });
+         fetch('check_sku.php?sku=' + encodeURIComponent(sku))
+             .then(response => response.json())
+             .then(data => {
+                 if (data.exists) {
+                     skuPopup.classList.remove('hidden');
+                     skuPopup.classList.add('flex');
+                 }
+             })
+             .catch(err => console.error('Gagal mengecek SKU:', err));
+     });
 
-    lucide.createIcons();
+     // Fungsi menutup popup SKU dan meminta inputan ulang
+     window.closeSkuPopup = function() {
+         skuPopup.classList.remove('flex');
+         skuPopup.classList.add('hidden');
+         idBarangInput.value = '';
+         idBarangInput.focus();
+     };
+ 
+     lucide.createIcons();
     </script>
 </body>
 

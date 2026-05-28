@@ -60,7 +60,7 @@ try {
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-medium">SKU Kode</span>
                         <span class="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 text-[10px] font-bold text-slate-650">
-                            #<?= htmlspecialchars($data['id_barang']) ?>
+                            #<?= htmlspecialchars($data['kode_barang']) ?>
                         </span>
                     </div>
                     <div class="flex justify-between items-center">

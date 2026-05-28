@@ -87,7 +87,7 @@ try {
                                 <select name="id_barang[]" class="w-full px-3 py-2 border border-slate-200 rounded-lg select-barang text-xs outline-none focus:border-brand-500 bg-white" required>
                                     <option value="">-- Pilih Produk --</option>
                                     <?php foreach ($barangs as $b): ?>
-                                        <option value="<?= htmlspecialchars($b['id_barang']) ?>" data-price="<?= htmlspecialchars($b['harga_beli']) ?>"><?= htmlspecialchars($b['nama_barang']) ?> (<?= htmlspecialchars($b['id_barang']) ?>)</option>
+                                        <option value="<?= htmlspecialchars($b['id_barang']) ?>" data-price="<?= htmlspecialchars($b['harga_beli']) ?>"><?= htmlspecialchars($b['nama_barang']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

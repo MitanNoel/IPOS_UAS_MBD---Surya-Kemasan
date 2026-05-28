@@ -26,10 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Prepared statement untuk insert
-        $sql = "INSERT INTO barang (id_barang, nama_barang, harga_jual, harga_beli, id_kategori) VALUES (:id_barang, :nama_barang, :harga_jual, :harga_beli, :id_kategori)";
+        $sql = "INSERT INTO barang (kode_barang, nama_barang, harga_jual, harga_beli, id_kategori) VALUES (:kode_barang, :nama_barang, :harga_jual, :harga_beli, :id_kategori)";
         $stmt = $pdo->prepare($sql);
         
-        $stmt->bindParam(':id_barang', $id_barang);
+        $stmt->bindParam(':kode_barang', $id_barang); // $id_barang from form contains the SKU code
         $stmt->bindParam(':nama_barang', $nama_barang);
         $stmt->bindParam(':harga_jual', $harga_jual);
         $stmt->bindParam(':harga_beli', $harga_beli);

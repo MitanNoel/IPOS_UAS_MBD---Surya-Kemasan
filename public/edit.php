@@ -67,7 +67,7 @@ try {
                         <i data-lucide="edit-3" class="w-6 h-6 text-brand-600"></i>
                         Perbarui Data Produk
                     </h1>
-                    <p class="text-slate-500 text-xs mt-1">Ubah detail barang untuk SKU #<strong class="font-mono text-slate-800"><?= htmlspecialchars($id) ?></strong>.</p>
+                    <p class="text-slate-500 text-xs mt-1">Ubah detail barang untuk SKU #<strong class="font-mono text-slate-800"><?= htmlspecialchars($data['kode_barang']) ?></strong>.</p>
                 </div>
                 <a href="index.php" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-650 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-colors">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
