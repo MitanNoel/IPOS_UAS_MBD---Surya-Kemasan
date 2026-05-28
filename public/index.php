@@ -3,6 +3,9 @@ require_once '../auth/check_auth.php';
 require_admin();
 require_once '../config/database.php';
 
+$sort = $_GET['sort'] ?? 'newest';
+$order = $sort === 'oldest' ? 'ASC' : 'DESC';
+
 try {
     // Query dynamic stock calculations
     $sql = "SELECT 
@@ -15,7 +18,7 @@ try {
                 COALESCE((b.harga_jual - b.harga_beli), 0) as margin
             FROM barang b
             LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
-            ORDER BY b.id_barang DESC";
+            ORDER BY b.id_barang $order";
     $stmt = $pdo->query($sql);
     $barang = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -51,9 +54,17 @@ try {
                     </h1>
                     <p class="text-slate-500 text-sm mt-1">Kelola data barang dagangan, harga jual/beli, dan kategori produk toko.</p>
                 </div>
-                <a href="tambah.php" class="ipos-btn-primary text-xs">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Tambah Produk Baru
-                </a>
+                <div class="flex flex-wrap items-center gap-3">
+                    <form method="GET" class="flex items-center">
+                        <select name="sort" onchange="this.form.submit()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 text-xs transition-all font-medium text-slate-600">
+                            <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>ID Terbaru</option>
+                            <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>ID Terlama</option>
+                        </select>
+                    </form>
+                    <a href="tambah.php" class="ipos-btn-primary text-xs">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Produk Baru
+                    </a>
+                </div>
             </div>
 
             <!-- Stats Panel -->

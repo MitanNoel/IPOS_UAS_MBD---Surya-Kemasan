@@ -7,6 +7,9 @@ if (!is_admin() && !is_kasir()) {
 }
 require_once '../config/database.php';
 
+$sort = $_GET['sort'] ?? 'newest';
+$order = $sort === 'oldest' ? 'ASC' : 'DESC';
+
 try {
     $stmt = $pdo->query("
         SELECT p.*, u.nama_user, COUNT(dp.iddetail_penjualan) as items_count 
@@ -14,7 +17,7 @@ try {
         LEFT JOIN user u ON p.id_user = u.id_user 
         LEFT JOIN detail_penjualan dp ON p.id_penjualan = dp.id_penjualan 
         GROUP BY p.id_penjualan 
-        ORDER BY p.tanggal DESC, p.id_penjualan DESC
+        ORDER BY p.id_penjualan $order
     ");
     $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -50,9 +53,17 @@ $message = $statusMessages[$status] ?? '';
                     </h1>
                     <p class="text-xs text-slate-500">Daftar transaksi penjualan kasir (POS).</p>
                 </div>
-                <a href="pos.php" class="ipos-btn-primary text-xs">
-                    <i data-lucide="shopping-cart" class="w-4 h-4"></i> Buka Aplikasi POS
-                </a>
+                <div class="flex flex-wrap items-center gap-3">
+                    <form method="GET" class="flex items-center">
+                        <select name="sort" onchange="this.form.submit()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 text-xs transition-all font-medium text-slate-600">
+                            <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>ID Terbaru</option>
+                            <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>ID Terlama</option>
+                        </select>
+                    </form>
+                    <a href="pos.php" class="ipos-btn-primary text-xs">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Buka Aplikasi POS
+                    </a>
+                </div>
             </div>
 
             <!-- Status Alert -->
