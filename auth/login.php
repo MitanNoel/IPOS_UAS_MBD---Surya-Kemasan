@@ -96,23 +96,6 @@ $error_display = isset($error_messages[$error_msg]) ? $error_messages[$error_msg
                         <i data-lucide="log-in" class="w-5 h-5"></i>Masuk ke Sistem
                     </button>
                 </form>
-
-                <!-- Demo Credentials Info -->
-                <div class="mt-8 p-4 bg-slate-50 border border-slate-100 rounded-xl">
-                    <p class="text-xs text-brand-700 font-semibold mb-2 flex items-center gap-1.5">
-                        <i data-lucide="info" class="w-3.5 h-3.5"></i> Kredensial Demo:
-                    </p>
-                    <div class="text-[11px] text-slate-650 space-y-2">
-                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-100">
-                            <span><strong>Admin:</strong> <code class="text-brand-600">admin</code></span>
-                            <span class="text-slate-400">pass: <code class="text-slate-700 font-medium">12345</code></span>
-                        </div>
-                        <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-100">
-                            <span><strong>Kasir:</strong> <code class="text-brand-600">kasir</code></span>
-                            <span class="text-slate-400">pass: <code class="text-slate-700 font-medium">12345</code></span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Footer -->
